@@ -17,13 +17,21 @@ such interfaces please refer directly to their respective documentation.
 The PSA Crypto core component exposes PSA Crypto APIs, for example
 the `PSA Cryptography API 1.1`_.
 
-*********
-Licensing
-*********
+*******
+License
+*******
 
-The software in this repository is provided under the :doc:`BSD-3-Clause license <license>`.
+The software in this repository is provided under the `BSD-3-Clause license <license.rst>`_.
 Other licensing schemes are allowed, as those described by the `OSI licences`_
 and explicitly stated in the corresponding source code.
+
+.. note::
+   Individual files contain the following tag instead of the full license text.
+
+   SPDX-License-Identifier:    BSD-3-Clause
+
+This enables machine processing of license information based on the SPDX
+License Identifiers that are here available: http://spdx.org/licenses/
 
 .. _PSA Cryptography API 1.1: https://developer.arm.com/documentation/ihi0086/latest/
 .. _OSI licences: https://opensource.org/licenses
