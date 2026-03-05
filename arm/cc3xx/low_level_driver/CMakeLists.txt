@@ -8,7 +8,7 @@
 add_library(${CC3XX_TARGET_NAME} STATIC)
 
 if (NOT DEFINED CC3XX_PLATFORM_INTERFACE)
-    message(FATAL "When building cc3xx_lowlevel, the platform dependency must be specified")
+    message(FATAL_ERROR "When building cc3xx_lowlevel, the platform dependency must be specified")
 endif()
 
 target_sources(${CC3XX_TARGET_NAME}
