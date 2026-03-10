@@ -76,7 +76,7 @@ void drbg_hash_test(struct test_result_t *ret)
                     "random bits mismatch");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_drbg_hash_uninit(&state);
 
     return;
@@ -142,7 +142,7 @@ void drbg_hmac_test(struct test_result_t *ret)
                     "random bits mismatch");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_drbg_hmac_uninit(&state);
 
     return;
@@ -198,7 +198,7 @@ void drbg_ctr_test(struct test_result_t *ret)
                     "random bits mismatch");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_drbg_ctr_uninit(&state);
 
     return;
