@@ -122,6 +122,7 @@ static bool is_valid_entropy(const uint32_t *entropy, size_t word_count)
     return true;
 }
 
+#ifdef CC3XX_CONFIG_TRNG_DMA
 static size_t rng_sram_memcmp(size_t sram_offset,
                             uint32_t *src,
                             size_t word_count)
@@ -139,7 +140,7 @@ static size_t rng_sram_memcmp(size_t sram_offset,
 
     return 0;
 }
-
+#endif /* CC3XX_CONFIG_TRNG_DMA */
 /* Static context of the TRNG config used by the test code itself */
 static struct cc3xx_noise_source_ctx_t g_trng_ctx = CC3XX_NOISE_SOURCE_CONTEXT_INIT;
 
