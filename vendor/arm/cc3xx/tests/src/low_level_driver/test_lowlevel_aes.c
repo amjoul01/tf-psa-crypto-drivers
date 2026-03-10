@@ -12,8 +12,6 @@
 
 #include <string.h>
 
-static struct cc3xx_aes_state_t state;
-
 int aes_test_lowlevel_encrypt_decrypt(struct aes_test_data_t *data,
                                       cc3xx_aes_mode_t mode,
                                       cc3xx_aes_keysize_t key_size)
@@ -34,7 +32,7 @@ int aes_test_lowlevel_encrypt_decrypt(struct aes_test_data_t *data,
                          key_size, (uint32_t *)mode_data.iv, mode_data.iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_aes_set_output_buffer(ciphertext, sizeof(ciphertext));
+    cc3xx_lowlevel_aes_set_output_buffer((uint8_t *)ciphertext, sizeof(ciphertext));
     cc3xx_lowlevel_aes_set_tag_len(16);
     cc3xx_lowlevel_aes_set_data_len(data->plaintext_len, data->auth_data_len);
 
@@ -56,7 +54,7 @@ int aes_test_lowlevel_encrypt_decrypt(struct aes_test_data_t *data,
                          key_size, (uint32_t *)mode_data.iv, mode_data.iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_aes_set_output_buffer(plaintext, sizeof(plaintext));
+    cc3xx_lowlevel_aes_set_output_buffer((uint8_t *)plaintext, sizeof(plaintext));
     cc3xx_lowlevel_aes_set_tag_len(16);
     cc3xx_lowlevel_aes_set_data_len(data->plaintext_len, data->auth_data_len);
 
@@ -108,7 +106,7 @@ int aes_test_lowlevel_oneshot_encrypt(struct aes_test_data_t *data,
                          key_size, (uint32_t *)mode_data.iv, mode_data.iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_aes_set_output_buffer(ciphertext, sizeof(ciphertext));
+    cc3xx_lowlevel_aes_set_output_buffer((uint8_t *)ciphertext, sizeof(ciphertext));
 
     cc3xx_lowlevel_aes_set_tag_len(expected_ciphertext.tag_len);
     cc3xx_lowlevel_aes_set_data_len(expected_ciphertext.ciphertext_len, data->auth_data_len);
@@ -160,7 +158,7 @@ int aes_test_lowlevel_oneshot_decrypt(struct aes_test_data_t *data,
                          key_size, (uint32_t *)mode_data.iv, mode_data.iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_aes_set_output_buffer(plaintext, sizeof(plaintext));
+    cc3xx_lowlevel_aes_set_output_buffer((uint8_t *)plaintext, sizeof(plaintext));
 
     cc3xx_lowlevel_aes_set_tag_len(ciphertext.tag_len);
     cc3xx_lowlevel_aes_set_data_len(ciphertext.ciphertext_len, data->auth_data_len);
@@ -210,7 +208,7 @@ int aes_test_lowlevel_verify_negative(struct aes_test_data_t *data,
                          key_size, (uint32_t *)mode_data.iv, mode_data.iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_aes_set_output_buffer(plaintext, sizeof(plaintext));
+    cc3xx_lowlevel_aes_set_output_buffer((uint8_t *)plaintext, sizeof(plaintext));
 
     if ((mode == CC3XX_AES_MODE_GCM || mode == CC3XX_AES_MODE_CCM)
         && data->auth_data_len > 0) {
@@ -251,7 +249,9 @@ cleanup:
     return rc;
 }
 
-static void chunked_submit(void (*submit_func)(const uint8_t *, size_t), uint8_t *data,
+typedef void (*submit_func_t)(const uint8_t *, size_t);
+
+static void chunked_submit(submit_func_t submit_func, uint8_t *data,
                     size_t length, size_t chunk_size) {
     size_t idx;
 
@@ -284,7 +284,7 @@ int aes_test_lowlevel_multipart_encrypt(struct aes_test_data_t *data,
                          key_size, (uint32_t *)mode_data.iv, mode_data.iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_aes_set_output_buffer(ciphertext, sizeof(ciphertext));
+    cc3xx_lowlevel_aes_set_output_buffer((uint8_t *)ciphertext, sizeof(ciphertext));
 
     cc3xx_lowlevel_aes_set_tag_len(expected_ciphertext.tag_len);
     cc3xx_lowlevel_aes_set_data_len(expected_ciphertext.ciphertext_len, data->auth_data_len);
@@ -294,7 +294,7 @@ int aes_test_lowlevel_multipart_encrypt(struct aes_test_data_t *data,
                        data->auth_data_len, chunk_size);
     }
 
-    chunked_submit(cc3xx_lowlevel_aes_update, data->plaintext, data->plaintext_len,
+    chunked_submit((submit_func_t)cc3xx_lowlevel_aes_update, data->plaintext, data->plaintext_len,
                    chunk_size);
 
     err = cc3xx_lowlevel_aes_finish(tag, NULL);
@@ -338,7 +338,7 @@ int aes_test_lowlevel_multipart_decrypt(struct aes_test_data_t *data,
                          key_size, (uint32_t *)mode_data.iv, mode_data.iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_aes_set_output_buffer(plaintext, sizeof(plaintext));
+    cc3xx_lowlevel_aes_set_output_buffer((uint8_t *)plaintext, sizeof(plaintext));
 
     cc3xx_lowlevel_aes_set_tag_len(ciphertext.tag_len);
     cc3xx_lowlevel_aes_set_data_len(ciphertext.ciphertext_len, data->auth_data_len);
@@ -348,7 +348,7 @@ int aes_test_lowlevel_multipart_decrypt(struct aes_test_data_t *data,
                        data->auth_data_len, chunk_size);
     }
 
-    chunked_submit(cc3xx_lowlevel_aes_update, ciphertext.ciphertext,
+    chunked_submit((submit_func_t)cc3xx_lowlevel_aes_update, ciphertext.ciphertext,
                    ciphertext.ciphertext_len, chunk_size);
 
     err = cc3xx_lowlevel_aes_finish((uint32_t*)ciphertext.tag, NULL);
@@ -514,7 +514,7 @@ int aes_test_lowlevel_oneshot_inplace_encrypt(struct aes_test_data_t *data,
                          key_size, (uint32_t *)mode_data.iv, mode_data.iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_aes_set_output_buffer(ciphertext, sizeof(ciphertext));
+    cc3xx_lowlevel_aes_set_output_buffer((uint8_t *)ciphertext, sizeof(ciphertext));
 
     cc3xx_lowlevel_aes_set_tag_len(expected_ciphertext.tag_len);
     cc3xx_lowlevel_aes_set_data_len(expected_ciphertext.ciphertext_len, data->auth_data_len);
@@ -523,7 +523,7 @@ int aes_test_lowlevel_oneshot_inplace_encrypt(struct aes_test_data_t *data,
         cc3xx_lowlevel_aes_update_authed_data(data->auth_data, data->auth_data_len);
     }
 
-    cc3xx_lowlevel_aes_update(ciphertext, data->plaintext_len);
+    cc3xx_lowlevel_aes_update((const uint8_t *)ciphertext, data->plaintext_len);
 
     err = cc3xx_lowlevel_aes_finish(tag, NULL);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
@@ -566,7 +566,7 @@ int aes_test_lowlevel_oneshot_inplace_decrypt(struct aes_test_data_t *data,
                          key_size, (uint32_t *)mode_data.iv, mode_data.iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_aes_set_output_buffer(plaintext, sizeof(plaintext));
+    cc3xx_lowlevel_aes_set_output_buffer((uint8_t *)plaintext, sizeof(plaintext));
 
     cc3xx_lowlevel_aes_set_tag_len(ciphertext.tag_len);
     cc3xx_lowlevel_aes_set_data_len(ciphertext.ciphertext_len, data->auth_data_len);
@@ -575,9 +575,9 @@ int aes_test_lowlevel_oneshot_inplace_decrypt(struct aes_test_data_t *data,
         cc3xx_lowlevel_aes_update_authed_data(data->auth_data, data->auth_data_len);
     }
 
-    cc3xx_lowlevel_aes_update(plaintext, ciphertext.ciphertext_len);
+    cc3xx_lowlevel_aes_update((uint8_t *)plaintext, ciphertext.ciphertext_len);
 
-    err = cc3xx_lowlevel_aes_finish((uint32_t*)ciphertext.tag, NULL);
+    err = cc3xx_lowlevel_aes_finish((uint32_t *)ciphertext.tag, NULL);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
     if (ciphertext.ciphertext_len != 0) {

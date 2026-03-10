@@ -14,12 +14,11 @@
 
 struct cc3xx_chacha_state_t state;
 
-int chacha_test_lowlevel_encrypt_decrypt(struct chacha_test_data_t *data)
+int chacha_test_lowlevel_encrypt_decrypt(const struct chacha_test_data_t *data)
 {
     uint8_t ciphertext[CC3XX_TEST_CHACHA_PLAINTEXT_MAX_LEN] = {0};
     uint8_t plaintext[CC3XX_TEST_CHACHA_PLAINTEXT_MAX_LEN] = {0};
     uint32_t tag[CC3XX_TEST_CHACHA_TAG_MAX_LEN / sizeof(uint32_t)] = {0};
-    size_t ciphertext_size;
     cc3xx_err_t err;
     int rc;
 
@@ -69,7 +68,7 @@ cleanup:
     return rc;
 }
 
-int chacha_test_lowlevel_oneshot_encrypt(struct chacha_test_data_t *data)
+int chacha_test_lowlevel_oneshot_encrypt(const struct chacha_test_data_t *data)
 {
     uint32_t ciphertext[CC3XX_TEST_CHACHA_PLAINTEXT_MAX_LEN / sizeof(uint32_t)] = {0};
     uint32_t tag[CC3XX_TEST_CHACHA_TAG_MAX_LEN / sizeof(uint32_t)] = {0};
@@ -82,7 +81,7 @@ int chacha_test_lowlevel_oneshot_encrypt(struct chacha_test_data_t *data)
                         data->iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_chacha20_set_output_buffer(ciphertext, sizeof(ciphertext));
+    cc3xx_lowlevel_chacha20_set_output_buffer((uint8_t *)ciphertext, sizeof(ciphertext));
 
     cc3xx_lowlevel_chacha20_update_authed_data(data->auth_data, data->auth_data_len);
 
@@ -116,12 +115,12 @@ int chacha_test_lowlevel_oneshot_decrypt(struct chacha_test_data_t *data)
                         data->iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_chacha20_set_output_buffer(plaintext, sizeof(plaintext));
+    cc3xx_lowlevel_chacha20_set_output_buffer((uint8_t *)plaintext, sizeof(plaintext));
 
     cc3xx_lowlevel_chacha20_update_authed_data(data->auth_data, data->auth_data_len);
     cc3xx_lowlevel_chacha20_update(data->ciphertext, data->ciphertext_len);
 
-    err = cc3xx_lowlevel_chacha20_finish(data->tag, NULL);
+    err = cc3xx_lowlevel_chacha20_finish((uint32_t *)data->tag, NULL);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
     cc3xx_test_assert(memcmp(plaintext, data->plaintext,
@@ -140,7 +139,6 @@ int chacha_test_lowlevel_verify_negative(struct chacha_test_data_t *data)
     uint32_t auth_data[CC3XX_TEST_CHACHA_PLAINTEXT_MAX_LEN / sizeof(uint32_t)] = {0};
     uint32_t ciphertext[CC3XX_TEST_CHACHA_PLAINTEXT_MAX_LEN / sizeof(uint32_t)] = {0};
     cc3xx_err_t err;
-    int expected_ciphertext_match = 0;
     int rc;
 
     memcpy(ciphertext, data->ciphertext, sizeof(data->ciphertext));
@@ -154,13 +152,13 @@ int chacha_test_lowlevel_verify_negative(struct chacha_test_data_t *data)
 
     auth_data[0] ^= 0xFF;
 
-    cc3xx_lowlevel_chacha20_set_output_buffer(plaintext, sizeof(plaintext));
+    cc3xx_lowlevel_chacha20_set_output_buffer((uint8_t *)plaintext, sizeof(plaintext));
 
-    cc3xx_lowlevel_chacha20_update_authed_data(auth_data, data->auth_data_len);
+    cc3xx_lowlevel_chacha20_update_authed_data((const uint8_t *)auth_data, data->auth_data_len);
 
     cc3xx_lowlevel_chacha20_update(data->ciphertext, data->ciphertext_len);
 
-    err = cc3xx_lowlevel_chacha20_finish(data->tag, NULL);
+    err = cc3xx_lowlevel_chacha20_finish((uint32_t *)data->tag, NULL);
     cc3xx_test_assert(err == CC3XX_ERR_INVALID_TAG);
 
     cc3xx_test_assert(memcmp(plaintext, data->plaintext,
@@ -173,7 +171,9 @@ cleanup:
     return rc;
 }
 
-static void chunked_submit(void (*submit_func)(const uint8_t *, size_t), uint8_t *data,
+typedef void (*submit_func_t)(const uint8_t *, size_t);
+
+static void chunked_submit(submit_func_t submit_func, uint8_t *data,
                     size_t length, size_t chunk_size) {
     size_t idx;
 
@@ -198,12 +198,12 @@ int chacha_test_lowlevel_multipart_encrypt(struct chacha_test_data_t *data,
                         data->iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_chacha20_set_output_buffer(ciphertext, sizeof(ciphertext));
+    cc3xx_lowlevel_chacha20_set_output_buffer((uint8_t *)ciphertext, sizeof(ciphertext));
 
     chunked_submit(cc3xx_lowlevel_chacha20_update_authed_data, data->auth_data,
                    data->auth_data_len, chunk_size);
 
-    chunked_submit(cc3xx_lowlevel_chacha20_update, data->plaintext, data->plaintext_len,
+    chunked_submit((submit_func_t)cc3xx_lowlevel_chacha20_update, data->plaintext, data->plaintext_len,
                    chunk_size);
 
     err = cc3xx_lowlevel_chacha20_finish(tag, NULL);
@@ -235,15 +235,15 @@ int chacha_test_lowlevel_multipart_decrypt(struct chacha_test_data_t *data,
                         data->iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_chacha20_set_output_buffer(plaintext, sizeof(plaintext));
+    cc3xx_lowlevel_chacha20_set_output_buffer((uint8_t *)plaintext, sizeof(plaintext));
 
     chunked_submit(cc3xx_lowlevel_chacha20_update_authed_data, data->auth_data,
                    data->auth_data_len, chunk_size);
 
-    chunked_submit(cc3xx_lowlevel_chacha20_update, data->ciphertext, data->ciphertext_len,
+    chunked_submit((submit_func_t)cc3xx_lowlevel_chacha20_update, data->ciphertext, data->ciphertext_len,
                    chunk_size);
 
-    err = cc3xx_lowlevel_chacha20_finish(data->tag, NULL);
+    err = cc3xx_lowlevel_chacha20_finish((uint32_t *)data->tag, NULL);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
     cc3xx_test_assert(memcmp(plaintext, data->plaintext,
@@ -287,7 +287,7 @@ int chacha_test_lowlevel_multipart_saveload_encrypt(struct chacha_test_data_t *d
                         data->iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_chacha20_set_output_buffer(ciphertext, sizeof(ciphertext));
+    cc3xx_lowlevel_chacha20_set_output_buffer((uint8_t *)ciphertext, sizeof(ciphertext));
 
     cc3xx_lowlevel_chacha20_get_state(&state);
     cc3xx_lowlevel_chacha20_uninit();
@@ -330,7 +330,7 @@ int chacha_test_lowlevel_multipart_saveload_decrypt(struct chacha_test_data_t *d
                         data->iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_chacha20_set_output_buffer(plaintext, sizeof(plaintext));
+    cc3xx_lowlevel_chacha20_set_output_buffer((uint8_t *)plaintext, sizeof(plaintext));
 
     cc3xx_lowlevel_chacha20_get_state(&state);
     cc3xx_lowlevel_chacha20_uninit();
@@ -342,7 +342,7 @@ int chacha_test_lowlevel_multipart_saveload_decrypt(struct chacha_test_data_t *d
                    chunk_size);
 
     cc3xx_lowlevel_chacha20_set_state(&state);
-    err = cc3xx_lowlevel_chacha20_finish(data->tag, NULL);
+    err = cc3xx_lowlevel_chacha20_finish((uint32_t *)data->tag, NULL);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
     cc3xx_test_assert(memcmp(plaintext, data->plaintext,
@@ -355,7 +355,7 @@ cleanup:
     return rc;
 }
 
-int chacha_test_lowlevel_oneshot_inplace_encrypt(struct chacha_test_data_t *data)
+int chacha_test_lowlevel_oneshot_inplace_encrypt(const struct chacha_test_data_t *data)
 {
     uint32_t ciphertext[CC3XX_TEST_CHACHA_PLAINTEXT_MAX_LEN / sizeof(uint32_t)] = {0};
     uint32_t tag[CC3XX_TEST_CHACHA_TAG_MAX_LEN / sizeof(uint32_t)] = {0};
@@ -370,11 +370,11 @@ int chacha_test_lowlevel_oneshot_inplace_encrypt(struct chacha_test_data_t *data
                         data->iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_chacha20_set_output_buffer(ciphertext, sizeof(ciphertext));
+    cc3xx_lowlevel_chacha20_set_output_buffer((uint8_t *)ciphertext, sizeof(ciphertext));
 
     cc3xx_lowlevel_chacha20_update_authed_data(data->auth_data, data->auth_data_len);
 
-    cc3xx_lowlevel_chacha20_update(ciphertext, data->plaintext_len);
+    cc3xx_lowlevel_chacha20_update((const uint8_t *)ciphertext, data->plaintext_len);
 
     err = cc3xx_lowlevel_chacha20_finish(tag, NULL);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
@@ -406,13 +406,13 @@ int chacha_test_lowlevel_oneshot_inplace_decrypt(struct chacha_test_data_t *data
                         data->iv_len);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    cc3xx_lowlevel_chacha20_set_output_buffer(plaintext, sizeof(plaintext));
+    cc3xx_lowlevel_chacha20_set_output_buffer((uint8_t *)plaintext, sizeof(plaintext));
 
     cc3xx_lowlevel_chacha20_update_authed_data(data->auth_data, data->auth_data_len);
 
-    cc3xx_lowlevel_chacha20_update(plaintext, data->ciphertext_len);
+    cc3xx_lowlevel_chacha20_update((const uint8_t *)plaintext, data->ciphertext_len);
 
-    err = cc3xx_lowlevel_chacha20_finish(data->tag, NULL);
+    err = cc3xx_lowlevel_chacha20_finish((uint32_t *)data->tag, NULL);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
     cc3xx_test_assert(memcmp(plaintext, data->plaintext,
