@@ -7,6 +7,47 @@
 
 set(CC3XX_TEST_TARGET_NAME ${CC3XX_TARGET_NAME}_tests)
 
+set(AVAILABLE_CC3XX_TESTS
+    TEST_CC3XX_HASH
+    TEST_CC3XX_AES
+    TEST_CC3XX_CHACHA
+    TEST_CC3XX_PKA
+    TEST_CC3XX_ECC
+    TEST_CC3XX_ECDSA
+    TEST_CC3XX_DRBG
+    TEST_CC3XX_DPA
+    TEST_CC3XX_RNG
+)
+
+set(ANY_CC3XX_TEST OFF)
+
+# Check if any is enabled
+foreach(test ${AVAILABLE_CC3XX_TESTS})
+    if(${test})
+        set(ANY_CC3XX_TEST ON)
+        break()
+    endif()
+endforeach()
+
+# If none enabled, enable them all because CC3XX_TEST is set at this point
+if(NOT ANY_CC3XX_TEST)
+    foreach(t ${AVAILABLE_CC3XX_TESTS})
+        set(${t} ON CACHE BOOL "" FORCE)
+    endforeach()
+endif()
+
+message(STATUS "\n-- --------- ${CC3XX_TEST_TARGET_NAME} -----------------")
+message(STATUS "   CC3XX Hash Test                    ${TEST_CC3XX_HASH}")
+message(STATUS "   CC3XX AES Test                     ${TEST_CC3XX_AES}")
+message(STATUS "   CC3XX ChaCha Test                  ${TEST_CC3XX_CHACHA}")
+message(STATUS "   CC3XX PKA Test                     ${TEST_CC3XX_PKA}")
+message(STATUS "   CC3XX ECC Test                     ${TEST_CC3XX_ECC}")
+message(STATUS "   CC3XX ECDSA Test                   ${TEST_CC3XX_ECDSA}")
+message(STATUS "   CC3XX DRBG Test                    ${TEST_CC3XX_DRBG}")
+message(STATUS "   CC3XX DPA Test                     ${TEST_CC3XX_DPA}")
+message(STATUS "   CC3XX RNG Test                     ${TEST_CC3XX_RNG}")
+message(STATUS "----------------------------------------------------------")
+
 add_library(${CC3XX_TEST_TARGET_NAME} INTERFACE)
 
 target_sources(${CC3XX_TEST_TARGET_NAME}
