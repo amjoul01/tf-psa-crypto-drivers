@@ -17,6 +17,30 @@ such interfaces please refer directly to their respective documentation.
 The PSA Crypto core component exposes PSA Crypto APIs, for example
 the `PSA Cryptography API 1.1`_.
 
+********************
+Repository structure
+********************
+
+PSA Crypto drivers in this repository are organized by vendor.
+All vendor implementations are located under the ``/vendor`` directory.
+Each vendor has its own subdirectory, which may contain one or more
+PSA Crypto drivers provided by that vendor.
+
+A typical layout looks like:
+
+.. code-block:: text
+
+    vendor/
+        vendor_a/
+            driver_1/
+            driver_2/
+        vendor_b/
+            driver_1/
+
+Each driver resides in its own directory and includes documentation
+describing its functionality and usage. The documentation structure
+within a vendo directory is defined by the vendor.
+
 *******
 License
 *******
