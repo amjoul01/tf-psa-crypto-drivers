@@ -197,7 +197,6 @@ cc3xx_ec_point_exp_test_data_t exp_test_data = {
 
 int cc3xx_test_ecc_validate_point(cc3xx_ec_public_key_test_data_t *data)
 {
-    size_t curve_register_size;
     cc3xx_ec_point_affine point;
     cc3xx_ec_curve_t curve;
     cc3xx_err_t err;
@@ -206,8 +205,8 @@ int cc3xx_test_ecc_validate_point(cc3xx_ec_public_key_test_data_t *data)
     err = cc3xx_lowlevel_ec_init(data->curve_id, &curve);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    err = cc3xx_lowlevel_ec_allocate_point_from_data(&curve, data->x, data->size,
-                                            data->y, data->size, &point);
+    err = cc3xx_lowlevel_ec_allocate_point_from_data(&curve, (const uint32_t *)data->x, data->size,
+                                            (const uint32_t *)data->y, data->size, &point);
     cc3xx_test_assert((err == CC3XX_ERR_SUCCESS) == data->expected);
 
     rc = 0;
@@ -217,7 +216,6 @@ cleanup:
 
 int cc3xx_test_ecc_double_point(cc3xx_ec_point_double_test_data_t *data)
 {
-    size_t curve_register_size;
     cc3xx_ec_point_affine point;
     cc3xx_ec_point_affine result;
     cc3xx_ec_curve_t curve;
@@ -229,8 +227,8 @@ int cc3xx_test_ecc_double_point(cc3xx_ec_point_double_test_data_t *data)
     err = cc3xx_lowlevel_ec_init(data->curve_id, &curve);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    err = cc3xx_lowlevel_ec_allocate_point_from_data(&curve, data->x, sizeof(data->x),
-                                                   data->y, sizeof(data->y), &point);
+    err = cc3xx_lowlevel_ec_allocate_point_from_data(&curve, (const uint32_t *)data->x, sizeof(data->x),
+                                                   (const uint32_t *)data->y, sizeof(data->y), &point);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
     result = cc3xx_lowlevel_ec_allocate_point();
@@ -252,7 +250,6 @@ cleanup:
 
 int cc3xx_test_ecc_add_points(cc3xx_ec_point_add_test_data_t *data)
 {
-    size_t curve_register_size;
     cc3xx_ec_point_affine p0;
     cc3xx_ec_point_affine p1;
     cc3xx_ec_point_affine result;
@@ -265,12 +262,12 @@ int cc3xx_test_ecc_add_points(cc3xx_ec_point_add_test_data_t *data)
     err = cc3xx_lowlevel_ec_init(data->curve_id, &curve);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    err = cc3xx_lowlevel_ec_allocate_point_from_data(&curve, data->x0, sizeof(data->x0),
-                                                   data->y0, sizeof(data->y0), &p0);
+    err = cc3xx_lowlevel_ec_allocate_point_from_data(&curve, (const uint32_t *)data->x0, sizeof(data->x0),
+                                                   (const uint32_t *)data->y0, sizeof(data->y0), &p0);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    err = cc3xx_lowlevel_ec_allocate_point_from_data(&curve, data->x1, sizeof(data->x1),
-                                                   data->y1, sizeof(data->y1), &p1);
+    err = cc3xx_lowlevel_ec_allocate_point_from_data(&curve, (const uint32_t *)data->x1, sizeof(data->x1),
+                                                   (const uint32_t *)data->y1, sizeof(data->y1), &p1);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
     result = cc3xx_lowlevel_ec_allocate_point();
@@ -291,7 +288,6 @@ cleanup:
 
 int cc3xx_test_ecc_exp_point(cc3xx_ec_point_exp_test_data_t *data)
 {
-    size_t curve_register_size;
     cc3xx_ec_point_affine p0;
     cc3xx_pka_reg_id_t s;
     cc3xx_ec_point_affine result;
@@ -304,14 +300,12 @@ int cc3xx_test_ecc_exp_point(cc3xx_ec_point_exp_test_data_t *data)
     err = cc3xx_lowlevel_ec_init(data->curve_id, &curve);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
-    err = cc3xx_lowlevel_ec_allocate_point_from_data(&curve, data->x0, sizeof(data->x0),
-                                                   data->y0, sizeof(data->y0), &p0);
+    err = cc3xx_lowlevel_ec_allocate_point_from_data(&curve, (const uint32_t *)data->x0, sizeof(data->x0),
+                                                   (const uint32_t *)data->y0, sizeof(data->y0), &p0);
     cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
 
     s = cc3xx_lowlevel_pka_allocate_reg();
-    cc3xx_lowlevel_pka_write_reg_swap_endian(s, data->s, sizeof(data->s));
-
-    cc3xx_test_assert(err == CC3XX_ERR_SUCCESS);
+    cc3xx_lowlevel_pka_write_reg_swap_endian(s, (const uint32_t *)data->s, sizeof(data->s));
 
     result = cc3xx_lowlevel_ec_allocate_point();
 
