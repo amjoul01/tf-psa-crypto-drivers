@@ -35,7 +35,7 @@ void pka_test_write_read(struct test_result_t *ret)
     TEST_ASSERT(memcmp(&val, &readback, sizeof(val)) == 0, "readback not equal to expected val");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -57,7 +57,7 @@ void pka_test_write_read_secret(struct test_result_t *ret)
     TEST_ASSERT(memcmp(&val, &readback, sizeof(val)) == 0, "readback not equal to expected val");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -86,7 +86,7 @@ void pka_test_write_partial_read(struct test_result_t *ret)
     TEST_ASSERT(memcmp(&val, &readback, sizeof(val)) == 0, "readback not equal to expected val");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -117,7 +117,7 @@ void pka_test_add(struct test_result_t *ret)
     TEST_ASSERT(readback == val0 + val1, "readback not equal to val0 + val1");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -126,7 +126,6 @@ cleanup:
 void pka_test_add_si(struct test_result_t *ret)
 {
     uint32_t r0;
-    uint32_t r1;
     uint32_t res;
     uint32_t val0 = 16;
     int32_t val1 = 15;
@@ -146,7 +145,7 @@ void pka_test_add_si(struct test_result_t *ret)
     TEST_ASSERT(readback == val0 + val1, "readback not equal to val0 + val1");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -155,7 +154,6 @@ cleanup:
 void pka_test_add_si_neg(struct test_result_t *ret)
 {
     uint32_t r0;
-    uint32_t r1;
     uint32_t res;
     uint32_t val0 = 16;
     int32_t val1 = -15;
@@ -175,7 +173,7 @@ void pka_test_add_si_neg(struct test_result_t *ret)
     TEST_ASSERT(readback == val0 + val1, "readback not equal to val0 + val1");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -215,7 +213,7 @@ void pka_test_add_unaligned(struct test_result_t *ret)
             "readback not equal to expected val");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 }
 
@@ -255,7 +253,7 @@ void pka_test_add_unaligned_be(struct test_result_t *ret)
             "readback not equal to expected val");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 }
 
@@ -284,7 +282,7 @@ void pka_test_sub(struct test_result_t *ret)
     TEST_ASSERT(readback == val0 - val1, "readback not equal to val0 - val1");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -293,7 +291,6 @@ cleanup:
 void pka_test_sub_si(struct test_result_t *ret)
 {
     uint32_t r0;
-    uint32_t r1;
     uint32_t res;
     uint32_t val0 = 16;
     int32_t val1 = 6;
@@ -313,7 +310,7 @@ void pka_test_sub_si(struct test_result_t *ret)
     TEST_ASSERT(readback == val0 - val1, "readback not equal to val0 - val1");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -322,7 +319,6 @@ cleanup:
 void pka_test_sub_si_neg(struct test_result_t *ret)
 {
     uint32_t r0;
-    uint32_t r1;
     uint32_t res;
     uint32_t val0 = 16;
     int32_t val1 = -6;
@@ -342,7 +338,7 @@ void pka_test_sub_si_neg(struct test_result_t *ret)
     TEST_ASSERT(readback == val0 - val1, "readback not equal to val0 - val1");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -351,7 +347,6 @@ cleanup:
 void pka_test_neg(struct test_result_t *ret)
 {
     uint32_t r0;
-    uint32_t r1;
     uint32_t res;
     uint32_t val0 = 16;
     int32_t readback;
@@ -370,7 +365,7 @@ void pka_test_neg(struct test_result_t *ret)
     TEST_ASSERT(readback == val0 * -1, "readback not equal to val0 * -1");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -380,19 +375,16 @@ void pka_test_get_bitsize(struct test_result_t *ret)
 {
     uint64_t val0 = 0x00FFFFFF0000FFFF;
     cc3xx_pka_reg_id_t r0;
-    uint32_t bitsize;
 
     cc3xx_lowlevel_pka_init(16);
     r0 = cc3xx_lowlevel_pka_allocate_reg();
 
-    cc3xx_lowlevel_pka_write_reg(r0, &val0, sizeof(val0));
+    cc3xx_lowlevel_pka_write_reg(r0, (const uint32_t *)&val0, sizeof(val0));
 
-    bitsize = cc3xx_lowlevel_pka_get_bit_size(r0);
-
-    assert(bitsize == 56);
+    TEST_ASSERT(cc3xx_lowlevel_pka_get_bit_size(r0) == 56, "bitsize is not as expected");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -427,7 +419,7 @@ void pka_test_mod_add(struct test_result_t *ret)
     TEST_ASSERT(readback == ((val0 + val1) % valN), "readback not equal to (val0 + val1) % valN");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -436,7 +428,6 @@ cleanup:
 void pka_test_mod_add_si(struct test_result_t *ret)
 {
     uint32_t r0;
-    uint32_t r1;
     uint32_t res;
     uint32_t val0 = 15;
     int32_t val1 = 14;
@@ -460,7 +451,7 @@ void pka_test_mod_add_si(struct test_result_t *ret)
     TEST_ASSERT(readback == ((val0 + val1) % valN), "readback not equal to (val0 + val1) % valN");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -496,7 +487,7 @@ void pka_test_mod_sub(struct test_result_t *ret)
     TEST_ASSERT(readback == expected, "readback not equal to expected");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
     /* while(1){} */
 
@@ -530,7 +521,7 @@ void pka_test_mod_sub_si(struct test_result_t *ret)
     TEST_ASSERT(readback == expected, "readback not equal to expected");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -540,7 +531,6 @@ void pka_test_shift_left(struct test_result_t *ret)
 {
     uint32_t end_val[] = {0xA0000000, 0x00000000, 0x00000000, 0x00000000,
                           0x00000000, 0x00000000, 0x00000000, 0x00000000};
-    int32_t readback;
     cc3xx_pka_reg_id_t r0;
     cc3xx_pka_reg_id_t expected;
     cc3xx_pka_reg_id_t end;
@@ -568,7 +558,7 @@ void pka_test_shift_left(struct test_result_t *ret)
     } while (!cc3xx_lowlevel_pka_are_equal(r0, end));
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -578,7 +568,6 @@ void pka_test_shift_right(struct test_result_t *ret)
 {
     uint32_t start_val[] = {0xA0000000, 0x00000000, 0x00000000, 0x00000000,
                             0x00000000, 0x00000000, 0x00000000, 0x00000000};
-    int32_t readback;
     cc3xx_pka_reg_id_t r0;
     cc3xx_pka_reg_id_t expected;
     cc3xx_pka_reg_id_t end;
@@ -609,7 +598,7 @@ void pka_test_shift_right(struct test_result_t *ret)
     } while (!cc3xx_lowlevel_pka_are_equal(r0, end));
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -643,7 +632,7 @@ void pka_test_mod_neg(struct test_result_t *ret)
     TEST_ASSERT(memcmp(readback, expected, sizeof(readback)) == 0, "readback not equal to expected");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -678,7 +667,7 @@ void pka_test_div(struct test_result_t *ret)
     TEST_ASSERT(memcmp(readback, expected, sizeof(expected)) == 0, "readback not equal to expected");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -720,7 +709,7 @@ void pka_test_mod_mul(struct test_result_t *ret)
     }
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -767,7 +756,7 @@ void pka_test_mod_exp(struct test_result_t *ret)
     TEST_ASSERT(readback == expected, "readback not equal to expected");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -800,7 +789,7 @@ void pka_test_mod_exp_si(struct test_result_t *ret)
     TEST_ASSERT(readback == expected, "readback not equal to expected");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -832,7 +821,7 @@ void pka_test_mod_inv(struct test_result_t *ret)
     TEST_ASSERT(readback == expected, "readback not equal to expected");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -864,7 +853,7 @@ void pka_test_mod_inv_prime_modulus(struct test_result_t *ret)
     TEST_ASSERT(readback == expected, "readback not equal to expected");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -882,7 +871,7 @@ void pka_test_virtual_registers(struct test_result_t *ret)
     cc3xx_lowlevel_pka_init(4);
     res = cc3xx_lowlevel_pka_allocate_reg();
 
-    for (idx = 0; idx < sizeof(r); idx++) {
+    for (idx = 0; idx < ARRAY_SIZE(r); idx++) {
         r[idx] = cc3xx_lowlevel_pka_allocate_reg();
         cc3xx_lowlevel_pka_write_reg(r[idx], &idx, sizeof(idx));
     }
@@ -892,12 +881,12 @@ void pka_test_virtual_registers(struct test_result_t *ret)
         cc3xx_lowlevel_rng_get_random_uint(sizeof(r), &rand_1, CC3XX_RNG_LFSR);
 
         cc3xx_lowlevel_pka_add(r[rand_0], r[rand_1], res);
-        cc3xx_lowlevel_pka_read_reg(res, &readback, sizeof(readback));
+        cc3xx_lowlevel_pka_read_reg(res, (uint32_t *)&readback, sizeof(readback));
         TEST_ASSERT(readback == rand_0 + rand_1, "readback not equal to expected");
     }
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -955,7 +944,7 @@ void pka_test_large_exponentiation(struct test_result_t *ret)
     TEST_ASSERT(memcmp(readback, expected, sizeof(expected)) == 0, "readback not equal to expected");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -984,7 +973,7 @@ void pka_test_endian_swap(struct test_result_t *ret)
     TEST_ASSERT(memcmp(&val, &readback, sizeof(val)) == 0, "swap back to original endianness produced wrong result");
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
@@ -995,12 +984,12 @@ void pka_test_cycle_counts(struct test_result_t *ret)
     cc3xx_pka_reg_id_t r0;
     cc3xx_pka_reg_id_t r1;
     cc3xx_pka_reg_id_t foo;
-    uint32_t res;
-    int32_t val0 = 32;
-    int32_t val1 = 6;
+    uint32_t val0 = 32;
+    uint32_t val1 = 6;
     uint32_t imm = 4;
     uint32_t simm = 4;
 
+    /* unary functions */
     void (*unary_functions[])(cc3xx_pka_reg_id_t) = {
         cc3xx_lowlevel_pka_clear,
         cc3xx_lowlevel_pka_reduce,
@@ -1011,13 +1000,16 @@ void pka_test_cycle_counts(struct test_result_t *ret)
         "cc3xx_lowlevel_pka_reduce",
     };
 
-    void (*binary_functions[])(cc3xx_pka_reg_id_t, cc3xx_pka_reg_id_t) = {
+    /* binary functions */
+    typedef void (*f_ptr_t)(cc3xx_pka_reg_id_t, cc3xx_pka_reg_id_t);
+
+    f_ptr_t binary_functions[] = {
         cc3xx_lowlevel_pka_neg,
         cc3xx_lowlevel_pka_mod_neg,
         cc3xx_lowlevel_pka_copy,
-        cc3xx_lowlevel_pka_are_equal,
-        cc3xx_lowlevel_pka_less_than,
-        cc3xx_lowlevel_pka_greater_than,
+        (f_ptr_t)cc3xx_lowlevel_pka_are_equal,
+        (f_ptr_t)cc3xx_lowlevel_pka_less_than,
+        (f_ptr_t)cc3xx_lowlevel_pka_greater_than,
         cc3xx_lowlevel_pka_mod_inv,
     };
 
@@ -1031,9 +1023,12 @@ void pka_test_cycle_counts(struct test_result_t *ret)
         "cc3xx_lowlevel_pka_mod_inv",
     };
 
-    void (*binary_uimm_functions[])(cc3xx_pka_reg_id_t, uint32_t) = {
+    /* binary uimm functions */
+    typedef void (*f_ptr_uimm_t)(cc3xx_pka_reg_id_t, uint32_t);
+
+    f_ptr_uimm_t binary_uimm_functions[] = {
         cc3xx_lowlevel_pka_set_to_power_of_two,
-        cc3xx_lowlevel_pka_set_to_random,
+        (f_ptr_uimm_t)cc3xx_lowlevel_pka_set_to_random,
     };
 
     char *binary_uimm_function_names[] = {
@@ -1041,11 +1036,14 @@ void pka_test_cycle_counts(struct test_result_t *ret)
         "cc3xx_lowlevel_pka_set_to_random",
     };
 
-    void (*binary_imm_functions[])(cc3xx_pka_reg_id_t, int32_t) = {
+    /* binary_imm functions */
+    typedef bool (*f_ptr_imm_t)(cc3xx_pka_reg_id_t, int32_t);
+
+    f_ptr_imm_t binary_imm_functions[] = {
         cc3xx_lowlevel_pka_are_equal_si,
         cc3xx_lowlevel_pka_less_than_si,
         cc3xx_lowlevel_pka_greater_than_si,
-        cc3xx_lowlevel_pka_test_bits_ui,
+        (f_ptr_imm_t)cc3xx_lowlevel_pka_test_bits_ui,
     };
 
     char *binary_imm_function_names[] = {
@@ -1055,6 +1053,7 @@ void pka_test_cycle_counts(struct test_result_t *ret)
         "cc3xx_lowlevel_pka_test_bits_ui",
     };
 
+    /* trinary functions */
     void (*trinary_functions[])(cc3xx_pka_reg_id_t, cc3xx_pka_reg_id_t, cc3xx_pka_reg_id_t) = {
         cc3xx_lowlevel_pka_add,
         cc3xx_lowlevel_pka_sub,
@@ -1083,6 +1082,7 @@ void pka_test_cycle_counts(struct test_result_t *ret)
         "cc3xx_lowlevel_pka_mod_exp",
     };
 
+    /* trinary_imm functions */
     void (*trinary_imm_functions[])(cc3xx_pka_reg_id_t, int32_t, cc3xx_pka_reg_id_t) = {
         cc3xx_lowlevel_pka_add_si,
         cc3xx_lowlevel_pka_sub_si,
@@ -1101,6 +1101,7 @@ void pka_test_cycle_counts(struct test_result_t *ret)
         "cc3xx_lowlevel_pka_mod_exp_si",
     };
 
+    /* trinary_uimm functions */
     void (*trinary_uimm_functions[])(cc3xx_pka_reg_id_t, uint32_t, cc3xx_pka_reg_id_t) = {
         cc3xx_lowlevel_pka_and_si,
         cc3xx_lowlevel_pka_or_si,
@@ -1127,7 +1128,8 @@ void pka_test_cycle_counts(struct test_result_t *ret)
         "cc3xx_lowlevel_pka_shift_left_fill_1_ui",
     };
 
-    void (*trinary_dual_uimm_functions[])(cc3xx_pka_reg_id_t, uint32_t, uint32_t) = {
+    /* trinary_dual_uimm functions */
+    uint32_t (*trinary_dual_uimm_functions[])(cc3xx_pka_reg_id_t, uint32_t, uint32_t) = {
         cc3xx_lowlevel_pka_test_bits_ui,
     };
 
@@ -1150,76 +1152,88 @@ void pka_test_cycle_counts(struct test_result_t *ret)
     uint32_t cyccnt_start = 0;
     uint32_t cyccnt_end = 0;
 
-    printf_set_color(MAGENTA);
-
-    for (int I = 0; I < sizeof(unary_functions) / 4; I++) {
+    for (int I = 0; I < ARRAY_SIZE(unary_functions); I++) {
         cyccnt_start = get_cycle_count();
         unary_functions[I](foo);
         cyccnt_end = get_cycle_count();
+        printf_set_color(MAGENTA);
         TEST_LOG("%s: %d cycles\r\n", unary_function_names[I],
                                     cyccnt_end - cyccnt_start);
+        printf_set_color(DEFAULT);
     }
 
-    for (int I = 0; I < sizeof(binary_functions) / 4; I++) {
+    for (int I = 0; I < ARRAY_SIZE(binary_functions); I++) {
         cyccnt_start = get_cycle_count();
         binary_functions[I](r0, foo);
         cyccnt_end = get_cycle_count();
+        printf_set_color(MAGENTA);
         TEST_LOG("%s: %d cycles\r\n", binary_function_names[I],
                                     cyccnt_end - cyccnt_start);
+        printf_set_color(DEFAULT);
     }
 
-    for (int I = 0; I < sizeof(binary_uimm_functions) / 4; I++) {
+    for (int I = 0; I < ARRAY_SIZE(binary_uimm_functions); I++) {
         cyccnt_start = get_cycle_count();
         binary_uimm_functions[I](foo, imm);
         cyccnt_end = get_cycle_count();
+        printf_set_color(MAGENTA);
         TEST_LOG("%s: %d cycles\r\n", binary_uimm_function_names[I],
                                     cyccnt_end - cyccnt_start);
+        printf_set_color(DEFAULT);
     }
 
-    for (int I = 0; I < sizeof(binary_imm_functions) / 4; I++) {
+    for (int I = 0; I < ARRAY_SIZE(binary_imm_functions); I++) {
         cyccnt_start = get_cycle_count();
         binary_imm_functions[I](foo, simm);
         cyccnt_end = get_cycle_count();
+        printf_set_color(MAGENTA);
         TEST_LOG("%s: %d cycles\r\n", binary_imm_function_names[I],
                                     cyccnt_end - cyccnt_start);
+        printf_set_color(DEFAULT);
     }
 
-    for (int I = 0; I < sizeof(trinary_functions) / 4; I++) {
+    for (int I = 0; I < ARRAY_SIZE(trinary_functions); I++) {
         cyccnt_start = get_cycle_count();
         trinary_functions[I](r0, r1, foo);
         cyccnt_end = get_cycle_count();
+        printf_set_color(MAGENTA);
         TEST_LOG("%s: %d cycles\r\n", trinary_function_names[I],
                                     cyccnt_end - cyccnt_start);
+        printf_set_color(DEFAULT);
     }
 
-    for (int I = 0; I < sizeof(trinary_imm_functions) / 4; I++) {
+    for (int I = 0; I < ARRAY_SIZE(trinary_imm_functions); I++) {
+        cyccnt_start = get_cycle_count();
+        trinary_imm_functions[I](r0, simm, foo);
+        cyccnt_end = get_cycle_count();
+        printf_set_color(MAGENTA);
+        TEST_LOG("%s: %d cycles\r\n", trinary_imm_function_names[I],
+                                    cyccnt_end - cyccnt_start);
+        printf_set_color(DEFAULT);
+    }
+
+    for (int I = 0; I < ARRAY_SIZE(trinary_uimm_functions); I++) {
         cyccnt_start = get_cycle_count();
         trinary_uimm_functions[I](r0, simm, foo);
         cyccnt_end = get_cycle_count();
+        printf_set_color(MAGENTA);
         TEST_LOG("%s: %d cycles\r\n", trinary_uimm_function_names[I],
                                     cyccnt_end - cyccnt_start);
+        printf_set_color(DEFAULT);
     }
 
-    for (int I = 0; I < sizeof(trinary_imm_functions) / 4; I++) {
-        cyccnt_start = get_cycle_count();
-        trinary_uimm_functions[I](r0, simm, foo);
-        cyccnt_end = get_cycle_count();
-        TEST_LOG("%s: %d cycles\r\n", trinary_uimm_function_names[I],
-                                    cyccnt_end - cyccnt_start);
-    }
-
-    for (int I = 0; I < sizeof(trinary_dual_uimm_functions) / 4; I++) {
+    for (int I = 0; I < ARRAY_SIZE(trinary_dual_uimm_functions); I++) {
         cyccnt_start = get_cycle_count();
         for (int J = 0; J < 100; J++) {
             trinary_dual_uimm_functions[I](r0, imm, imm);
             while(!P_CC3XX->pka.pka_done){}
         }
         cyccnt_end = get_cycle_count();
+        printf_set_color(MAGENTA);
         TEST_LOG("%s: %d cycles\r\n", trinary_dual_uimm_function_names[I],
                                     (cyccnt_end - cyccnt_start) / 100);
+        printf_set_color(DEFAULT);
     }
-
-    printf_set_color(DEFAULT);
 
     ret->val = TEST_PASSED;
     return;
@@ -1245,7 +1259,7 @@ void pka_test_test_bits_ui(struct test_result_t *ret)
     }
 
     ret->val = TEST_PASSED;
-cleanup:
+
     cc3xx_lowlevel_pka_uninit();
 
     return;
