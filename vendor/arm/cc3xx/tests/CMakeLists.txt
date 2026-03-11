@@ -5,6 +5,24 @@
 #
 #-------------------------------------------------------------------------------
 
+# format_string is in cmake/utils.cmake in trusted-firmware-m, but provide it
+# also here in case this is being used without the rest of TF-M's cmake tools
+if(NOT COMMAND format_string)
+    function(format_string output input size filler)
+        string(LENGTH "${input}" length)
+
+        if(length LESS size)
+            math(EXPR pad "${size} - ${length}")
+            string(REPEAT "${filler}" ${pad} padding)
+            string(CONCAT result "${input}" "${padding}")
+        else()
+            set(result "${input}")
+        endif()
+
+        set(${output} "${result}" PARENT_SCOPE)
+    endfunction()
+endif()
+
 set(CC3XX_TEST_TARGET_NAME ${CC3XX_TARGET_NAME}_tests)
 
 set(AVAILABLE_CC3XX_TESTS
@@ -36,17 +54,19 @@ if(NOT ANY_CC3XX_TEST)
     endforeach()
 endif()
 
-message(STATUS "\n-- --------- ${CC3XX_TEST_TARGET_NAME} -----------------")
-message(STATUS "   CC3XX Hash Test                    ${TEST_CC3XX_HASH}")
-message(STATUS "   CC3XX AES Test                     ${TEST_CC3XX_AES}")
-message(STATUS "   CC3XX ChaCha Test                  ${TEST_CC3XX_CHACHA}")
-message(STATUS "   CC3XX PKA Test                     ${TEST_CC3XX_PKA}")
-message(STATUS "   CC3XX ECC Test                     ${TEST_CC3XX_ECC}")
-message(STATUS "   CC3XX ECDSA Test                   ${TEST_CC3XX_ECDSA}")
-message(STATUS "   CC3XX DRBG Test                    ${TEST_CC3XX_DRBG}")
-message(STATUS "   CC3XX DPA Test                     ${TEST_CC3XX_DPA}")
-message(STATUS "   CC3XX RNG Test                     ${TEST_CC3XX_RNG}")
-message(STATUS "----------------------------------------------------------")
+format_string(header "-------- ${CC3XX_TEST_TARGET_NAME} " 50 "-")
+message(STATUS "\n-- ${header}")
+message(STATUS "   CC3XX Hash Test                   ${TEST_CC3XX_HASH}")
+message(STATUS "   CC3XX AES Test                    ${TEST_CC3XX_AES}")
+message(STATUS "   CC3XX ChaCha Test                 ${TEST_CC3XX_CHACHA}")
+message(STATUS "   CC3XX PKA Test                    ${TEST_CC3XX_PKA}")
+message(STATUS "   CC3XX ECC Test                    ${TEST_CC3XX_ECC}")
+message(STATUS "   CC3XX ECDSA Test                  ${TEST_CC3XX_ECDSA}")
+message(STATUS "   CC3XX DRBG Test                   ${TEST_CC3XX_DRBG}")
+message(STATUS "   CC3XX DPA Test                    ${TEST_CC3XX_DPA}")
+message(STATUS "   CC3XX RNG Test                    ${TEST_CC3XX_RNG}")
+format_string(footer "-" 50 "-")
+message(STATUS "${footer}")
 
 add_library(${CC3XX_TEST_TARGET_NAME} INTERFACE)
 
