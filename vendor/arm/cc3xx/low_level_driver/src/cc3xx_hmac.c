@@ -236,6 +236,10 @@ out:
         }
         cc3xx_lowlevel_hash_get_state(&state->hash);
         cc3xx_secure_erase_buffer(h_out, CC3XX_HASH_LENGTH(state->alg) / sizeof(uint32_t));
+    } else {
+        if (tag_len != NULL) {
+            *tag_len = 0;
+        }
     }
     cc3xx_lowlevel_hash_uninit();
     return err;

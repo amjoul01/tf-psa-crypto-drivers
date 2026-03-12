@@ -43,7 +43,7 @@ typedef enum {
     CC3XX_AES_MODE_CMAC     = 0b0111U,
     CC3XX_AES_MODE_CCM      = 0b1011U,
 
-    _CC3XX_AES_MODE_PAD     = UINT32_MAX
+    CC3XX_AES_MODE_INVALID = UINT32_MAX
 } cc3xx_aes_mode_t;
 
 typedef enum {

@@ -182,7 +182,7 @@ static psa_status_t aead_crypt(
     case PSA_KEY_TYPE_AES:
     {
         cc3xx_aes_keysize_t key_size;
-        cc3xx_aes_mode_t mode;
+        cc3xx_aes_mode_t mode = CC3XX_AES_MODE_INVALID;
 #if !defined(CC3XX_CONFIG_AES_TUNNELLING_ENABLE) && defined(PSA_WANT_ALG_CCM)
         uint8_t ctr[AES_IV_LEN] = {0};
         bool ctr_required = ((default_alg == PSA_ALG_CCM) && (data_minus_tag > 0) &&
@@ -367,7 +367,7 @@ psa_status_t cc3xx_aead_set_nonce(
 }
 
 psa_status_t cc3xx_aead_set_lengths(
-        cc3xx_aead_operation_t *operation,
+        cc3xx_aead_operation_t *operation, /* cppcheck-suppress constParameterPointer */
         size_t ad_length,
         size_t plaintext_length)
 {

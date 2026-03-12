@@ -228,7 +228,7 @@ static psa_status_t ecdsa_verify(const psa_key_attributes_t *attributes, cc3xx_e
 psa_status_t cc3xx_sign_hash(const psa_key_attributes_t *attributes,
                              const uint8_t *key, size_t key_length,
                              psa_algorithm_t alg, const uint8_t *hash,
-                             size_t hash_length, uint8_t *signature,
+                             size_t hash_length, uint8_t *signature, /* cppcheck-suppress constParameterPointer */
                              size_t signature_size, size_t *signature_length)
 {
     CC3XX_ASSERT(attributes != NULL);
@@ -238,7 +238,6 @@ psa_status_t cc3xx_sign_hash(const psa_key_attributes_t *attributes,
     CC3XX_ASSERT(signature_length != NULL);
 
     psa_algorithm_t hash_alg = PSA_ALG_SIGN_GET_HASH(alg);
-
     psa_key_type_t key_type = psa_get_key_type(attributes);
     psa_key_bits_t key_bits = psa_get_key_bits(attributes);
 
@@ -301,7 +300,6 @@ psa_status_t cc3xx_verify_hash(const psa_key_attributes_t *attributes,
     CC3XX_ASSERT(signature != NULL);
 
     psa_algorithm_t hash_alg = PSA_ALG_SIGN_GET_HASH(alg);
-
     psa_key_type_t key_type = psa_get_key_type(attributes);
     psa_key_bits_t key_bits = psa_get_key_bits(attributes);
 
@@ -352,7 +350,7 @@ psa_status_t cc3xx_verify_hash(const psa_key_attributes_t *attributes,
 psa_status_t cc3xx_sign_message(const psa_key_attributes_t *attributes,
                                 const uint8_t *key, size_t key_length,
                                 psa_algorithm_t alg, const uint8_t *input,
-                                size_t input_length, uint8_t *signature,
+                                size_t input_length, uint8_t *signature, /* cppcheck-suppress constParameterPointer */
                                 size_t signature_size, size_t *signature_length)
 {
     CC3XX_ASSERT(attributes != NULL);
@@ -362,7 +360,6 @@ psa_status_t cc3xx_sign_message(const psa_key_attributes_t *attributes,
     CC3XX_ASSERT(signature_length != NULL);
 
     psa_algorithm_t hash_alg = PSA_ALG_SIGN_GET_HASH(alg);
-
     psa_key_type_t key_type = psa_get_key_type(attributes);
     psa_key_bits_t key_bits = psa_get_key_bits(attributes);
 
@@ -418,7 +415,6 @@ psa_status_t cc3xx_verify_message(const psa_key_attributes_t *attributes,
     CC3XX_ASSERT(signature != NULL);
 
     psa_algorithm_t hash_alg = PSA_ALG_SIGN_GET_HASH(alg);
-
     psa_key_type_t key_type = psa_get_key_type(attributes);
     psa_key_bits_t key_bits = psa_get_key_bits(attributes);
 

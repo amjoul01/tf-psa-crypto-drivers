@@ -188,7 +188,7 @@ static psa_status_t cmac_update(struct cc3xx_aes_state_t *state,
 /** @brief Finalize a multipart CMAC operation by producing the
  *         corresponding MAC
  */
-static psa_status_t cmac_finish(struct cc3xx_aes_state_t *state,
+static psa_status_t cmac_finish(const struct cc3xx_aes_state_t *state,
                                 uint32_t *output, size_t *output_length)
 {
     cc3xx_err_t err;
@@ -197,6 +197,7 @@ static psa_status_t cmac_finish(struct cc3xx_aes_state_t *state,
 
     err = cc3xx_lowlevel_aes_finish(output, NULL);
     if (err != CC3XX_ERR_SUCCESS) {
+        *output_length = 0;
         return cc3xx_to_psa_err(err);
     }
 
@@ -310,7 +311,7 @@ static psa_status_t mac_setup(cc3xx_mac_operation_t *operation,
                               const uint8_t *key_buffer, size_t key_buffer_size,
                               psa_algorithm_t alg)
 {
-    psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_status_t status;
 
     CC3XX_ASSERT(operation != NULL);
     CC3XX_ASSERT(attributes != NULL);
@@ -331,7 +332,7 @@ static psa_status_t mac_setup(cc3xx_mac_operation_t *operation,
     } else
 #endif /* PSA_WANT_ALG_HMAC */
     {
-        return PSA_ERROR_INVALID_ARGUMENT;
+        status = PSA_ERROR_INVALID_ARGUMENT;
     }
 
     if (status != PSA_SUCCESS) {
@@ -365,10 +366,10 @@ psa_status_t cc3xx_mac_verify_setup(cc3xx_mac_operation_t *operation,
     return mac_setup(operation, attributes, key_buffer, key_buffer_size, alg);
 }
 
+/* cppcheck-suppress constParameterPointer */
 psa_status_t cc3xx_mac_update(cc3xx_mac_operation_t *operation,
                               const uint8_t *input, size_t input_length)
 {
-    cc3xx_err_t err;
     CC3XX_ASSERT(operation != NULL);
     CC3XX_ASSERT(input != NULL);
 
@@ -379,23 +380,23 @@ psa_status_t cc3xx_mac_update(cc3xx_mac_operation_t *operation,
 #endif /* PSA_WANT_ALG_CMAC */
 #if defined(PSA_WANT_ALG_HMAC)
     if (PSA_ALG_IS_HMAC(operation->alg)) {
-        err = cc3xx_lowlevel_hmac_update(&(operation->hmac), input, input_length);
+        cc3xx_err_t err = cc3xx_lowlevel_hmac_update(&(operation->hmac), input, input_length);
 
         return cc3xx_to_psa_err(err);
 
     } else
 #endif /* PSA_WANT_ALG_HMAC */
     {
-        (void)err;
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 }
 
-psa_status_t cc3xx_mac_sign_finish(cc3xx_mac_operation_t *operation,
-                                   uint8_t *mac, size_t mac_size,
-                                   size_t *mac_length)
+psa_status_t cc3xx_mac_sign_finish(cc3xx_mac_operation_t *operation, /* cppcheck-suppress constParameterPointer */
+                                   uint8_t *mac, /* cppcheck-suppress constParameterPointer */
+                                   size_t mac_size,
+                                   size_t *mac_length) /* cppcheck-suppress constParameterPointer */
 {
-    psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_status_t status;
 
     CC3XX_ASSERT(operation != NULL);
     CC3XX_ASSERT(mac != NULL);
@@ -412,18 +413,13 @@ psa_status_t cc3xx_mac_sign_finish(cc3xx_mac_operation_t *operation,
     } else
 #endif /* PSA_WANT_ALG_HMAC */
     {
-        return PSA_ERROR_INVALID_ARGUMENT;
-    }
-
-    if (status != PSA_SUCCESS) {
-        *mac_length = 0;
-        return status;
+        status = PSA_ERROR_INVALID_ARGUMENT;
     }
 
     return status;
 }
 
-psa_status_t cc3xx_mac_verify_finish(cc3xx_mac_operation_t *operation,
+psa_status_t cc3xx_mac_verify_finish(cc3xx_mac_operation_t *operation, /* cppcheck-suppress constParameterPointer */
                                      const uint8_t *mac, size_t mac_length)
 {
     psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
@@ -541,6 +537,6 @@ out:
     cc3xx_mac_abort(&operation);
     return status;
 
-#endif /* CC3XX_CONFIG_MAC_INTEGRATED */
+#endif /* CC3XX_CONFIG_ENABLE_MAC_INTEGRATED_API */
 }
 /** @} */ // end of psa_mac

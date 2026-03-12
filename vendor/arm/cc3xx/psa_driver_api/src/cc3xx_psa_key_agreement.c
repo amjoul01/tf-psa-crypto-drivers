@@ -38,7 +38,8 @@ psa_status_t cc3xx_key_agreement(
         const psa_key_attributes_t *attributes,
         const uint8_t *priv_key, size_t priv_key_size,
         const uint8_t *publ_key, size_t publ_key_size,
-        uint8_t *output, size_t output_size, size_t *output_length,
+        uint8_t *output, /* cppcheck-suppress constParameterPointer */
+        size_t output_size, size_t *output_length,
         psa_algorithm_t alg)
 {
     CC3XX_ASSERT(attributes != NULL);

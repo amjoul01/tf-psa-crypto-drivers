@@ -464,7 +464,7 @@ psa_status_t cc3xx_internal_cipher_setup_complete(
 #if defined(PSA_WANT_KEY_TYPE_AES)
         case PSA_KEY_TYPE_AES:
         {
-            uint32_t *key_buf = (operation->aes.key_id == CC3XX_AES_KEY_ID_USER_KEY) ?
+            const uint32_t *key_buf = (operation->aes.key_id == CC3XX_AES_KEY_ID_USER_KEY) ?
                                 operation->aes.key_buf : NULL;
 
             err = cc3xx_lowlevel_aes_init(operation->aes.direction,

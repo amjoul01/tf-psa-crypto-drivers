@@ -14,7 +14,7 @@
 
 cc3xx_err_t cc3xx_lowlevel_drbg_init(
     cc3xx_drbg_id_t id,
-    struct cc3xx_drbg_state_t *state,
+    struct cc3xx_drbg_state_t *state, /* cppcheck-suppress constParameterPointer */
     const uint8_t *entropy, size_t entropy_len,
     const uint8_t *nonce, size_t nonce_len,
     const uint8_t *personalization, size_t personalization_len)
@@ -54,7 +54,7 @@ cc3xx_err_t cc3xx_lowlevel_drbg_init(
 }
 
 cc3xx_err_t cc3xx_lowlevel_drbg_generate(
-    struct cc3xx_drbg_state_t *state,
+    struct cc3xx_drbg_state_t *state, /* cppcheck-suppress constParameterPointer */
     size_t len_bits, uint8_t *returned_bits,
     const uint8_t *additional_input, size_t additional_input_len)
 {
@@ -80,7 +80,7 @@ cc3xx_err_t cc3xx_lowlevel_drbg_generate(
 }
 
 cc3xx_err_t cc3xx_lowlevel_drbg_reseed(
-    struct cc3xx_drbg_state_t *state,
+    struct cc3xx_drbg_state_t *state, /* cppcheck-suppress constParameterPointer */
     const uint8_t *entropy, size_t entropy_len,
     const uint8_t *additional_input, size_t additional_input_len)
 {
@@ -105,6 +105,7 @@ cc3xx_err_t cc3xx_lowlevel_drbg_reseed(
     }
 }
 
+/* cppcheck-suppress constParameterPointer */
 cc3xx_err_t cc3xx_lowlevel_drbg_uninit(struct cc3xx_drbg_state_t *state)
 {
     switch (state->id) {
