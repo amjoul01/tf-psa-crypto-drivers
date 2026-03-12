@@ -29,36 +29,36 @@ cc3xx_ec_point_projective cc3xx_lowlevel_ec_allocate_projective_point(void)
     return res;
 }
 
-void cc3xx_lowlevel_ec_free_projective_point(cc3xx_ec_point_projective *p)
+void cc3xx_lowlevel_ec_free_projective_point(const cc3xx_ec_point_projective *p)
 {
     cc3xx_lowlevel_pka_free_reg(p->z);
     cc3xx_lowlevel_pka_free_reg(p->y);
     cc3xx_lowlevel_pka_free_reg(p->x);
 }
 
-bool cc3xx_lowlevel_ec_projective_point_is_infinity(cc3xx_ec_point_projective *p)
+bool cc3xx_lowlevel_ec_projective_point_is_infinity(const cc3xx_ec_point_projective *p)
 {
     return cc3xx_lowlevel_pka_are_equal_si(p->z, 0);
 }
 
-void cc3xx_lowlevel_ec_copy_projective_point(cc3xx_ec_point_projective *p,
-                                    cc3xx_ec_point_projective *res)
+void cc3xx_lowlevel_ec_copy_projective_point(const cc3xx_ec_point_projective *p,
+                                             const cc3xx_ec_point_projective *res)
 {
     cc3xx_lowlevel_pka_copy(p->x, res->x);
     cc3xx_lowlevel_pka_copy(p->y, res->y);
     cc3xx_lowlevel_pka_copy(p->z, res->z);
 }
 
-void cc3xx_lowlevel_ec_projective_point_make_infinity(cc3xx_ec_point_projective *res)
+void cc3xx_lowlevel_ec_projective_point_make_infinity(const cc3xx_ec_point_projective *res)
 {
     cc3xx_lowlevel_pka_clear(res->x);                  /* x = 0 */
     cc3xx_lowlevel_pka_set_to_power_of_two(res->y, 0); /* y = 2^0 = 1 */
     cc3xx_lowlevel_pka_clear(res->z);                  /* z = 0 */
 }
 
-void cc3xx_lowlevel_ec_affine_to_jacobian_with_random_z(cc3xx_ec_curve_t *curve,
-                                                        cc3xx_ec_point_affine *p,
-                                                        cc3xx_ec_point_projective *res)
+void cc3xx_lowlevel_ec_affine_to_jacobian_with_random_z(const cc3xx_ec_curve_t *curve,
+                                                        const cc3xx_ec_point_affine *p,
+                                                        const cc3xx_ec_point_projective *res)
 {
 #ifndef CC3XX_CONFIG_DPA_MITIGATIONS_ENABLE
     return cc3xx_lowlevel_ec_affine_to_jacobian(curve, p, res);
@@ -88,9 +88,9 @@ void cc3xx_lowlevel_ec_affine_to_jacobian_with_random_z(cc3xx_ec_curve_t *curve,
 #endif /* CC3XX_CONFIG_DPA_MITIGATIONS_ENABLE */
 }
 
-void cc3xx_lowlevel_ec_affine_to_jacobian(cc3xx_ec_curve_t *curve,
-                                          cc3xx_ec_point_affine *p,
-                                          cc3xx_ec_point_projective *res)
+void cc3xx_lowlevel_ec_affine_to_jacobian(const cc3xx_ec_curve_t *curve,
+                                          const cc3xx_ec_point_affine *p,
+                                          const cc3xx_ec_point_projective *res)
 {
     cc3xx_lowlevel_pka_copy(p->x, res->x);
     cc3xx_lowlevel_pka_copy(p->y, res->y);
@@ -98,9 +98,9 @@ void cc3xx_lowlevel_ec_affine_to_jacobian(cc3xx_ec_curve_t *curve,
     cc3xx_lowlevel_pka_add_si(res->z, 1, res->z);
 }
 
-cc3xx_err_t cc3xx_lowlevel_ec_jacobian_to_affine(cc3xx_ec_curve_t *curve,
-                                                 cc3xx_ec_point_projective *p,
-                                                 cc3xx_ec_point_affine *res)
+cc3xx_err_t cc3xx_lowlevel_ec_jacobian_to_affine(const cc3xx_ec_curve_t *curve,
+                                                 const cc3xx_ec_point_projective *p,
+                                                 const cc3xx_ec_point_affine *res)
 {
     if (cc3xx_lowlevel_ec_projective_point_is_infinity(p)) {
         FATAL_ERR(CC3XX_ERR_EC_POINT_IS_INFINITY);

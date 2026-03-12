@@ -35,26 +35,26 @@ cc3xx_ec_point_projective cc3xx_lowlevel_ec_allocate_projective_point(void);
  *
  * @param[in]  p                 A pointer to the projective point to free.
  */
-void cc3xx_lowlevel_ec_free_projective_point(cc3xx_ec_point_projective *p);
+void cc3xx_lowlevel_ec_free_projective_point(const cc3xx_ec_point_projective *p);
 
 /**
  * @brief                        Copy a projective EC point.
  *
- * @param[in]  p                 A pointer to the projective point to copy.
- * @param[out] res               A pointer to the projective point to copy into.
+ * @param[in] p                  A pointer to the projective point to copy.
+ * @param[in] res                A pointer to the projective point to copy into.
  */
-void cc3xx_lowlevel_ec_copy_projective_point(cc3xx_ec_point_projective *p,
-                                             cc3xx_ec_point_projective *res);
+void cc3xx_lowlevel_ec_copy_projective_point(const cc3xx_ec_point_projective *p,
+                                             const cc3xx_ec_point_projective *res);
 /**
  * @brief                        Make a projective EC point equal to infinity,
  *                               i.e. (0, 1, 0)
  *
  * @note                         Using (0, 1, 0) ensures the point is on the curve
  *
- * @param[out] res               A pointer to the projective point to make equal to
+ * @param[in] res                A pointer to the projective point to make equal to
  *                               the infinity point
  */
-void cc3xx_lowlevel_ec_projective_point_make_infinity(cc3xx_ec_point_projective *res);
+void cc3xx_lowlevel_ec_projective_point_make_infinity(const cc3xx_ec_point_projective *res);
 
 /**
  * @brief                        Test if a projective point is infinity.
@@ -64,7 +64,7 @@ void cc3xx_lowlevel_ec_projective_point_make_infinity(cc3xx_ec_point_projective 
  * @return                       true if the projective point is the infinity
  *                               point, false if it isn't.
  */
-bool cc3xx_lowlevel_ec_projective_point_is_infinity(cc3xx_ec_point_projective *p);
+bool cc3xx_lowlevel_ec_projective_point_is_infinity(const cc3xx_ec_point_projective *p);
 
 /**
  * @brief                        Convert an affine point to a Jacobian-form
@@ -72,13 +72,13 @@ bool cc3xx_lowlevel_ec_projective_point_is_infinity(cc3xx_ec_point_projective *p
  *                               Ya = Yj / Zj^3. Should not be used on secret
  *                               data.
  *
- * @param[in]  curve             A pointer to an initialized curve object
- * @param[in]  p                 A pointer to the projective point to copy.
- * @param[out] res               A pointer to the projective point to copy into.
+ * @param[in] curve              A pointer to an initialized curve object
+ * @param[in] p                  A pointer to the projective point to copy.
+ * @param[in] res                A pointer to the projective point to copy into.
  */
-void cc3xx_lowlevel_ec_affine_to_jacobian(cc3xx_ec_curve_t *curve,
-                                          cc3xx_ec_point_affine *p,
-                                          cc3xx_ec_point_projective *res);
+void cc3xx_lowlevel_ec_affine_to_jacobian(const cc3xx_ec_curve_t *curve,
+                                          const cc3xx_ec_point_affine *p,
+                                          const cc3xx_ec_point_projective *res);
 
 /**
  * @brief                        Convert an affine point to a Jacobian-form
@@ -89,26 +89,26 @@ void cc3xx_lowlevel_ec_affine_to_jacobian(cc3xx_ec_curve_t *curve,
  *                               function falls back to having a Z coordinate of
  *                               1.
  *
- * @param[in]  curve             A pointer to an initialized curve object
- * @param[in]  p                 A pointer to the affine point to convert.
- * @param[out] res               A pointer to the Jacobian point object.
+ * @param[in] curve              A pointer to an initialized curve object
+ * @param[in] p                  A pointer to the affine point to convert.
+ * @param[in] res                A pointer to the Jacobian point object.
  */
-void cc3xx_lowlevel_ec_affine_to_jacobian_with_random_z(cc3xx_ec_curve_t *curve,
-                                                        cc3xx_ec_point_affine *p,
-                                                        cc3xx_ec_point_projective *res);
+void cc3xx_lowlevel_ec_affine_to_jacobian_with_random_z(const cc3xx_ec_curve_t *curve,
+                                                        const cc3xx_ec_point_affine *p,
+                                                        const cc3xx_ec_point_projective *res);
 
 /**
  * @brief                        Convert a Jacobian-form projective point to an
  *                               Affine point.
  *                               Xa = Xj / Zj^2, Ya = Yj / Zj^3.
  *
- * @param[in]  curve             A pointer to an initialized curve object
- * @param[in]  p                 A pointer to the Jacobian point to convert.
- * @param[out] res               A pointer to the affine point object.
+ * @param[in] curve              A pointer to an initialized curve object
+ * @param[in] p                  A pointer to the Jacobian point to convert.
+ * @param[in] res                A pointer to the affine point object.
  */
-cc3xx_err_t cc3xx_lowlevel_ec_jacobian_to_affine(cc3xx_ec_curve_t *curve,
-                                                 cc3xx_ec_point_projective *p,
-                                                 cc3xx_ec_point_affine *res);
+cc3xx_err_t cc3xx_lowlevel_ec_jacobian_to_affine(const cc3xx_ec_curve_t *curve,
+                                                 const cc3xx_ec_point_projective *p,
+                                                 const cc3xx_ec_point_affine *res);
 
 #ifdef __cplusplus
 }

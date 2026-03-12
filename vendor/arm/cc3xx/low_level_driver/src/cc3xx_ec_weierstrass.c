@@ -32,8 +32,8 @@
  */
 #define SCALAR_MULT_NO_SECRET
 #endif
-bool cc3xx_lowlevel_ec_weierstrass_validate_point(cc3xx_ec_curve_t *curve,
-                                                  cc3xx_ec_point_affine *p)
+bool cc3xx_lowlevel_ec_weierstrass_validate_point(const cc3xx_ec_curve_t *curve,
+                                                  const cc3xx_ec_point_affine *p)
 {
     cc3xx_err_t err;
     bool validate_succeeded = false;
@@ -82,11 +82,12 @@ bool cc3xx_lowlevel_ec_weierstrass_validate_point(cc3xx_ec_curve_t *curve,
     return validate_succeeded;
 }
 
-void cc3xx_lowlevel_ec_weierstrass_negate_point(cc3xx_ec_point_affine *p,
-                                                cc3xx_ec_point_affine *res)
+void cc3xx_lowlevel_ec_weierstrass_negate_point(const cc3xx_ec_point_affine *p,
+                                                const cc3xx_ec_point_affine *res)
 {
     /* No need to perform affine-to-projective conversion, since we can just
-     * negate the affine point */
+     * negate the affine point
+     */
     if (p != res) {
         cc3xx_lowlevel_pka_copy(p->x, res->x);
     }
@@ -97,8 +98,8 @@ void cc3xx_lowlevel_ec_weierstrass_negate_point(cc3xx_ec_point_affine *p,
 /* Using dbl-2007-bl via
  * https://www.hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#doubling-dbl-2007-bl
  */
-static void double_point(cc3xx_ec_curve_t *curve, cc3xx_ec_point_projective *p,
-                         cc3xx_ec_point_projective *res)
+static void double_point(const cc3xx_ec_curve_t *curve, const cc3xx_ec_point_projective *p,
+                         const cc3xx_ec_point_projective *res)
 {
     const bool p_is_infinity = cc3xx_lowlevel_ec_projective_point_is_infinity(p);
 
@@ -204,9 +205,9 @@ static void double_point(cc3xx_ec_curve_t *curve, cc3xx_ec_point_projective *p,
     cc3xx_lowlevel_pka_free_reg(t0);
 }
 
-cc3xx_err_t cc3xx_lowlevel_ec_weierstrass_double_point(cc3xx_ec_curve_t *curve,
-                                                       cc3xx_ec_point_affine *p,
-                                                       cc3xx_ec_point_affine *res)
+cc3xx_err_t cc3xx_lowlevel_ec_weierstrass_double_point(const cc3xx_ec_curve_t *curve,
+                                                       const cc3xx_ec_point_affine *p,
+                                                       const cc3xx_ec_point_affine *res)
 {
     cc3xx_err_t err;
 
@@ -231,8 +232,8 @@ cc3xx_err_t cc3xx_lowlevel_ec_weierstrass_double_point(cc3xx_ec_curve_t *curve,
  *
  * note that input points p and q must be affine points, Zp=Zq=1
  */
-static void mmadd_points(cc3xx_ec_curve_t *curve, cc3xx_ec_point_projective *p,
-                       cc3xx_ec_point_projective *q, cc3xx_ec_point_projective *res)
+static void mmadd_points(const cc3xx_ec_curve_t *curve, const cc3xx_ec_point_projective *p,
+                         const cc3xx_ec_point_projective *q, const cc3xx_ec_point_projective *res)
 {
     cc3xx_pka_reg_id_t t0 = cc3xx_lowlevel_pka_allocate_reg();
 
@@ -340,8 +341,8 @@ static void mmadd_points(cc3xx_ec_curve_t *curve, cc3xx_ec_point_projective *p,
  *
  * note that input point Q must be an affine point, Zq=1
  */
-static void madd_points(cc3xx_ec_curve_t *curve, cc3xx_ec_point_projective *p,
-                       cc3xx_ec_point_projective *q, cc3xx_ec_point_projective *res)
+static void madd_points(const cc3xx_ec_curve_t *curve, const cc3xx_ec_point_projective *p,
+                        const cc3xx_ec_point_projective *q, const cc3xx_ec_point_projective *res)
 {
     const bool p_is_infinity = cc3xx_lowlevel_ec_projective_point_is_infinity(p);
 
@@ -492,8 +493,8 @@ static void madd_points(cc3xx_ec_curve_t *curve, cc3xx_ec_point_projective *p,
 /* Using add-2007-bl via
  * https://www.hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-2007-bl
  */
-static void add_points(cc3xx_ec_curve_t *curve, cc3xx_ec_point_projective *p,
-                       cc3xx_ec_point_projective *q, cc3xx_ec_point_projective *res)
+static void add_points(const cc3xx_ec_curve_t *curve, const cc3xx_ec_point_projective *p,
+                       const cc3xx_ec_point_projective *q, const cc3xx_ec_point_projective *res)
 {
     const bool p_is_infinity = cc3xx_lowlevel_ec_projective_point_is_infinity(p);
     const bool q_is_infinity = cc3xx_lowlevel_ec_projective_point_is_infinity(q);
@@ -668,10 +669,10 @@ static void add_points(cc3xx_ec_curve_t *curve, cc3xx_ec_point_projective *p,
     cc3xx_lowlevel_pka_free_reg(t0);
 }
 
-cc3xx_err_t cc3xx_lowlevel_ec_weierstrass_add_points(cc3xx_ec_curve_t *curve,
-                                                     cc3xx_ec_point_affine *p,
-                                                     cc3xx_ec_point_affine *q,
-                                                     cc3xx_ec_point_affine *res)
+cc3xx_err_t cc3xx_lowlevel_ec_weierstrass_add_points(const cc3xx_ec_curve_t *curve,
+                                                     const cc3xx_ec_point_affine *p,
+                                                     const cc3xx_ec_point_affine *q,
+                                                     const cc3xx_ec_point_affine *res)
 {
     cc3xx_err_t err;
 
@@ -694,8 +695,8 @@ cc3xx_err_t cc3xx_lowlevel_ec_weierstrass_add_points(cc3xx_ec_curve_t *curve,
 }
 
 #if !defined(CC3XX_CONFIG_EC_SHAMIR_TRICK_ENABLE) || !defined(SCALAR_MULT_NO_SECRET)
-static void negate_point(cc3xx_ec_point_projective *p,
-                         cc3xx_ec_point_projective *res)
+static void negate_point(const cc3xx_ec_point_projective *p,
+                         const cc3xx_ec_point_projective *res)
 {
     if (p != res) {
         cc3xx_lowlevel_pka_copy(p->x, res->x);
@@ -706,10 +707,10 @@ static void negate_point(cc3xx_ec_point_projective *p,
 }
 
 static cc3xx_err_t multiply_point_by_scalar_side_channel_protected(
-                                             cc3xx_ec_curve_t *curve,
-                                             cc3xx_ec_point_affine *p,
+                                             const cc3xx_ec_curve_t *curve,
+                                             const cc3xx_ec_point_affine *p,
                                              cc3xx_pka_reg_id_t scalar,
-                                             cc3xx_ec_point_affine *res)
+                                             const cc3xx_ec_point_affine *res)
 {
     int32_t idx;
     uint8_t bit_pair;
@@ -737,11 +738,11 @@ static cc3xx_err_t multiply_point_by_scalar_side_channel_protected(
      *  table) because we'd run out of physical PKA registers, which would cause
      *  a _huge_ performance hit with a register flush/remap in the inner loop.
      */
-    cc3xx_ec_point_projective point_add_table[8] = {
+    const cc3xx_ec_point_projective point_add_table[8] = {
         proj_neg_4p, proj_neg_2p, proj_neg_2p, proj_neg_p,
         proj_p,      proj_p,      proj_2p,     proj_4p,
     };
-    int32_t carry_table[8] = { 0, -1, 0, 0, -1, 0, 0, -1, };
+    const int32_t carry_table[8] = {0, -1, 0, 0, -1, 0, 0, -1};
 
     /* This must be done before the unmap, so that p isn't mapped for the main
      * part of this function.
@@ -858,12 +859,12 @@ static cc3xx_err_t multiply_point_by_scalar_side_channel_protected(
 
 #if defined(CC3XX_CONFIG_EC_SHAMIR_TRICK_ENABLE)
 static cc3xx_err_t shamir_multiply_points_by_scalars_and_add(
-                                             cc3xx_ec_curve_t *curve,
-                                             cc3xx_ec_point_affine *p1,
+                                             const cc3xx_ec_curve_t *curve,
+                                             const cc3xx_ec_point_affine *p1,
                                              cc3xx_pka_reg_id_t    scalar1,
-                                             cc3xx_ec_point_affine *p2,
+                                             const cc3xx_ec_point_affine *p2,
                                              cc3xx_pka_reg_id_t    scalar2,
-                                             cc3xx_ec_point_affine *res)
+                                             const cc3xx_ec_point_affine *res)
 {
     int32_t idx;
     uint32_t bitsize1;
@@ -942,10 +943,10 @@ static cc3xx_err_t shamir_multiply_points_by_scalars_and_add(
 #endif /* CC3XX_CONFIG_EC_SHAMIR_TRICK_ENABLE */
 
 cc3xx_err_t cc3xx_lowlevel_ec_weierstrass_multiply_point_by_scalar(
-                                             cc3xx_ec_curve_t *curve,
-                                             cc3xx_ec_point_affine *p,
+                                             const cc3xx_ec_curve_t *curve,
+                                             const cc3xx_ec_point_affine *p,
                                              cc3xx_pka_reg_id_t scalar,
-                                             cc3xx_ec_point_affine *res)
+                                             const cc3xx_ec_point_affine *res)
 {
     /* If we only ever handle non-secret data, we can save some code size by
      * using the Shamir trick exponentiation with a zero as the second scalar
@@ -965,12 +966,12 @@ cc3xx_err_t cc3xx_lowlevel_ec_weierstrass_multiply_point_by_scalar(
 }
 
 cc3xx_err_t cc3xx_lowlevel_ec_weierstrass_shamir_multiply_points_by_scalars_and_add(
-                                             cc3xx_ec_curve_t *curve,
-                                             cc3xx_ec_point_affine *p1,
+                                             const cc3xx_ec_curve_t *curve,
+                                             const cc3xx_ec_point_affine *p1,
                                              cc3xx_pka_reg_id_t    scalar1,
-                                             cc3xx_ec_point_affine *p2,
+                                             const cc3xx_ec_point_affine *p2,
                                              cc3xx_pka_reg_id_t    scalar2,
-                                             cc3xx_ec_point_affine *res)
+                                             const cc3xx_ec_point_affine *res)
 {
 #if defined(CC3XX_CONFIG_EC_SHAMIR_TRICK_ENABLE)
     return shamir_multiply_points_by_scalars_and_add(curve,

@@ -63,8 +63,8 @@ static bool check_and_set_modulus_to_curve_modulus(const cc3xx_ec_curve_t *curve
 }
 
 /* Using the procedure from appendix D.1 of NIST SP800-186 */
-static bool validate_point(cc3xx_ec_curve_t *curve,
-                           cc3xx_ec_point_affine *p)
+static bool validate_point(const cc3xx_ec_curve_t *curve,
+                           const cc3xx_ec_point_affine *p)
 {
     if (!cc3xx_lowlevel_pka_less_than(p->x, CC3XX_PKA_REG_N)) {
         return false;
@@ -101,7 +101,7 @@ static bool validate_point(cc3xx_ec_curve_t *curve,
     }
 }
 
-static cc3xx_err_t allocate_point_from_data(cc3xx_ec_curve_t *curve,
+static cc3xx_err_t allocate_point_from_data(const cc3xx_ec_curve_t *curve,
                                             const uint32_t *x,
                                             size_t x_len,
                                             const uint32_t *y,
@@ -117,7 +117,7 @@ static cc3xx_err_t allocate_point_from_data(cc3xx_ec_curve_t *curve,
                                       : CC3XX_ERR_EC_POINT_OUTSIDE_FIELD;
 }
 
-cc3xx_err_t cc3xx_lowlevel_ec_allocate_point_from_data(cc3xx_ec_curve_t *curve,
+cc3xx_err_t cc3xx_lowlevel_ec_allocate_point_from_data(const cc3xx_ec_curve_t *curve,
                                                        const uint32_t *x,
                                                        size_t x_len,
                                                        const uint32_t *y,
@@ -248,7 +248,7 @@ static bool validate_reg_is_equal_to_buf(cc3xx_pka_reg_id_t reg, const uint32_t 
     return memcmp(validate_buf, buf, len) == 0;
 }
 
-static bool validate_curve(cc3xx_ec_curve_t *curve)
+static bool validate_curve(const cc3xx_ec_curve_t *curve)
 {
     const cc3xx_ec_curve_data_t *curve_data = curve_data_map[curve->id];
     bool result = true;
@@ -349,10 +349,10 @@ cc3xx_err_t cc3xx_lowlevel_ec_init(cc3xx_ec_curve_id_t id,
     return CC3XX_ERR_SUCCESS;
 }
 
-cc3xx_err_t cc3xx_lowlevel_ec_add_points(cc3xx_ec_curve_t *curve,
-                                         cc3xx_ec_point_affine *p,
-                                         cc3xx_ec_point_affine *q,
-                                         cc3xx_ec_point_affine *res)
+cc3xx_err_t cc3xx_lowlevel_ec_add_points(const cc3xx_ec_curve_t *curve,
+                                         const cc3xx_ec_point_affine *p,
+                                         const cc3xx_ec_point_affine *q,
+                                         const cc3xx_ec_point_affine *res)
 {
     cc3xx_err_t err;
 
@@ -374,9 +374,9 @@ cc3xx_err_t cc3xx_lowlevel_ec_add_points(cc3xx_ec_curve_t *curve,
     return err;
 }
 
-cc3xx_err_t cc3xx_lowlevel_ec_double_point(cc3xx_ec_curve_t *curve,
-                                           cc3xx_ec_point_affine *p,
-                                           cc3xx_ec_point_affine *res)
+cc3xx_err_t cc3xx_lowlevel_ec_double_point(const cc3xx_ec_curve_t *curve,
+                                           const cc3xx_ec_point_affine *p,
+                                           const cc3xx_ec_point_affine *res)
 {
     cc3xx_err_t err;
 
@@ -426,7 +426,7 @@ static cc3xx_err_t blind_scalar(const cc3xx_ec_curve_t *curve, cc3xx_pka_reg_id_
 }
 #endif /* CC3XX_CONFIG_DPA_MITIGATIONS_ENABLE */
 
-static bool pad_scalar(cc3xx_ec_curve_t *curve, cc3xx_pka_reg_id_t scalar,
+static bool pad_scalar(const cc3xx_ec_curve_t *curve, cc3xx_pka_reg_id_t scalar,
                        cc3xx_pka_reg_id_t res)
 {
     bool negate_at_end = false;
@@ -466,10 +466,10 @@ static bool split_scalar(const cc3xx_ec_curve_t *curve, cc3xx_pka_reg_id_t scala
 }
 #endif /* CC3XX_CONFIG_DPA_MITIGATIONS_ENABLE */
 
-cc3xx_err_t cc3xx_lowlevel_ec_multiply_point_by_scalar(cc3xx_ec_curve_t *curve,
-                                                       cc3xx_ec_point_affine *p,
+cc3xx_err_t cc3xx_lowlevel_ec_multiply_point_by_scalar(const cc3xx_ec_curve_t *curve,
+                                                       const cc3xx_ec_point_affine *p,
                                                        cc3xx_pka_reg_id_t scalar,
-                                                       cc3xx_ec_point_affine *res)
+                                                       const cc3xx_ec_point_affine *res)
 {
     cc3xx_pka_reg_id_t padded_scalar = cc3xx_lowlevel_pka_allocate_reg();
     cc3xx_pka_reg_id_t scalar_to_input = padded_scalar;
@@ -605,12 +605,12 @@ out:
  * is controlled eventually by CC3XX_CONFIG_EC_SHAMIR_TRICK_ENABLE
  */
 cc3xx_err_t cc3xx_lowlevel_ec_shamir_multiply_points_by_scalars_and_add(
-                                             cc3xx_ec_curve_t *curve,
-                                             cc3xx_ec_point_affine *p1,
+                                             const cc3xx_ec_curve_t *curve,
+                                             const cc3xx_ec_point_affine *p1,
                                              cc3xx_pka_reg_id_t    scalar1,
-                                             cc3xx_ec_point_affine *p2,
+                                             const cc3xx_ec_point_affine *p2,
                                              cc3xx_pka_reg_id_t    scalar2,
-                                             cc3xx_ec_point_affine *res)
+                                             const cc3xx_ec_point_affine *res)
 {
     cc3xx_err_t err = CC3XX_ERR_SUCCESS;
 

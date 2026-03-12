@@ -77,6 +77,9 @@ cc3xx_ec_point_affine cc3xx_lowlevel_ec_allocate_point(void);
  * @brief                        Allocate an affine point and initialize it with
  *                               a value
  *
+ * @note                         This function actually allocates a point for res
+ *                               so the pointer must be writable
+ *
  * @param[in]  curve             A pointer to an initialized curve object
  * @param[in]  x                 The buffer to read the x coordinate from.
  * @param[in]  x_len             The size of the x coordinate buffer.
@@ -88,7 +91,7 @@ cc3xx_ec_point_affine cc3xx_lowlevel_ec_allocate_point(void);
  * @return                       CC3XX_ERR_SUCCESS on success, another
  *                               cc3xx_err_t on error.
  */
-cc3xx_err_t cc3xx_lowlevel_ec_allocate_point_from_data(cc3xx_ec_curve_t *curve,
+cc3xx_err_t cc3xx_lowlevel_ec_allocate_point_from_data(const cc3xx_ec_curve_t *curve,
                                                        const uint32_t *x,
                                                        size_t x_len,
                                                        const uint32_t *y,
@@ -105,36 +108,36 @@ void cc3xx_lowlevel_ec_free_point(const cc3xx_ec_point_affine *p);
 /**
  * @brief                        Add two affine points
  *
- * @param[in]  curve             A pointer to an initialized curve object
- * @param[in]  p                 A pointer to the first affine point object to
+ * @param[in] curve              A pointer to an initialized curve object
+ * @param[in] p                  A pointer to the first affine point object to
  *                               add.
- * @param[in]  q                 A pointer to the second affine point object to
+ * @param[in] q                  A pointer to the second affine point object to
  *                               add.
- * @param[out] res               A pointer to the affine point object which the
+ * @param[in] res                A pointer to the affine point object which the
  *                               result will be written to.
  *
  * @return                       CC3XX_ERR_SUCCESS on success, another
  *                               cc3xx_err_t on error.
  */
-cc3xx_err_t cc3xx_lowlevel_ec_add_points(cc3xx_ec_curve_t *curve,
-                                         cc3xx_ec_point_affine *p,
-                                         cc3xx_ec_point_affine *q,
-                                         cc3xx_ec_point_affine *res);
+cc3xx_err_t cc3xx_lowlevel_ec_add_points(const cc3xx_ec_curve_t *curve,
+                                         const cc3xx_ec_point_affine *p,
+                                         const cc3xx_ec_point_affine *q,
+                                         const cc3xx_ec_point_affine *res);
 
 /**
  * @brief                        Double an affine point
  *
- * @param[in]  curve             A pointer to an initialized curve object
- * @param[in]  p                 A pointer to the affine point object to double.
- * @param[out] res               A pointer to the affine point object which the
+ * @param[in] curve              A pointer to an initialized curve object
+ * @param[in] p                  A pointer to the affine point object to double.
+ * @param[in] res                A pointer to the affine point object which the
  *                               result will be written to.
  *
  * @return                       CC3XX_ERR_SUCCESS on success, another
  *                               cc3xx_err_t on error.
  */
-cc3xx_err_t cc3xx_lowlevel_ec_double_point(cc3xx_ec_curve_t *curve,
-                                           cc3xx_ec_point_affine *p,
-                                           cc3xx_ec_point_affine *res);
+cc3xx_err_t cc3xx_lowlevel_ec_double_point(const cc3xx_ec_curve_t *curve,
+                                           const cc3xx_ec_point_affine *p,
+                                           const cc3xx_ec_point_affine *res);
 
 /**
  * @brief                        Multiply an affine point by a scalar value
@@ -144,20 +147,20 @@ cc3xx_err_t cc3xx_lowlevel_ec_double_point(cc3xx_ec_curve_t *curve,
  *                               protected against timing attacks, further
  *                               mitigations can be enabled by config.
  *
- * @param[in]  curve             A pointer to an initialized curve object
- * @param[in]  p                 A pointer to the affine point object to
+ * @param[in] curve              A pointer to an initialized curve object
+ * @param[in] p                  A pointer to the affine point object to
  *                               multiply.
- * @param[in]  scalar            The scalar value to multiply the point by.
- * @param[out] res               A pointer to the affine point object which the
+ * @param[in] scalar             The scalar value to multiply the point by.
+ * @param[in] res                A pointer to the affine point object which the
  *                               result will be written to.
  *
  * @return                       CC3XX_ERR_SUCCESS on success, another
  *                               cc3xx_err_t on error.
  */
-cc3xx_err_t cc3xx_lowlevel_ec_multiply_point_by_scalar(cc3xx_ec_curve_t *curve,
-                                                       cc3xx_ec_point_affine *p,
+cc3xx_err_t cc3xx_lowlevel_ec_multiply_point_by_scalar(const cc3xx_ec_curve_t *curve,
+                                                       const cc3xx_ec_point_affine *p,
                                                        cc3xx_pka_reg_id_t scalar,
-                                                       cc3xx_ec_point_affine *res);
+                                                       const cc3xx_ec_point_affine *res);
 
 /**
  * @brief                        Multiply two scalars by two separate affine
@@ -169,28 +172,28 @@ cc3xx_err_t cc3xx_lowlevel_ec_multiply_point_by_scalar(cc3xx_ec_curve_t *curve,
  *                               values, in case the Shamir trick is used which
  *                               is not side-channel protected.
  *
- * @param[in]  curve             A pointer to an initialized curve object
- * @param[in]  p1                A pointer to the first affine point object to
+ * @param[in] curve              A pointer to an initialized curve object
+ * @param[in] p1                 A pointer to the first affine point object to
  *                               multiply.
- * @param[in]  scalar1           The scalar value to multiply the first point
+ * @param[in] scalar1            The scalar value to multiply the first point
  *                               by.
- * @param[in]  p2                A pointer to the second affine point object to
+ * @param[in] p2                 A pointer to the second affine point object to
  *                               multiply.
- * @param[in]  scalar2           The scalar value to multiply the second point
+ * @param[in] scalar2            The scalar value to multiply the second point
  *                               by.
- * @param[out] res               A pointer to the affine point object which the
+ * @param[in] res                A pointer to the affine point object which the
  *                               result will be written to.
  *
  * @return                       CC3XX_ERR_SUCCESS on success, another
  *                               cc3xx_err_t on error.
  */
 cc3xx_err_t cc3xx_lowlevel_ec_shamir_multiply_points_by_scalars_and_add(
-                                             cc3xx_ec_curve_t *curve,
-                                             cc3xx_ec_point_affine *p1,
+                                             const cc3xx_ec_curve_t *curve,
+                                             const cc3xx_ec_point_affine *p1,
                                              cc3xx_pka_reg_id_t    scalar1,
-                                             cc3xx_ec_point_affine *p2,
+                                             const cc3xx_ec_point_affine *p2,
                                              cc3xx_pka_reg_id_t    scalar2,
-                                             cc3xx_ec_point_affine *res);
+                                             const cc3xx_ec_point_affine *res);
 
 /**
  * @brief Getter method to return the associated \a modulus_size from a curve.
