@@ -49,9 +49,10 @@ static psa_status_t cmac_compute(const psa_key_attributes_t *attributes,
     psa_key_type_t key_type = psa_get_key_type(attributes);
     size_t key_bits = psa_get_key_bits(attributes);
     size_t tag_len = PSA_MAC_LENGTH(key_type, key_bits, PSA_ALG_CMAC);
+    const uint32_t *p_key = (const uint32_t *)key_buffer;
+#ifdef CC3XX_CRYPTO_OPAQUE_KEYS
     cc3xx_aes_key_id_t key_id = CC3XX_AES_KEY_ID_USER_KEY;
 
-#ifdef CC3XX_CRYPTO_OPAQUE_KEYS
     if (CC3XX_IS_OPAQUE_KEY(attributes)) {
         key_id = (cc3xx_aes_key_id_t)(((uint32_t *)key_buffer)[0]);
     }
@@ -68,11 +69,20 @@ static psa_status_t cmac_compute(const psa_key_attributes_t *attributes,
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
+#ifdef CC3XX_CRYPTO_OPAQUE_KEYS
+    if (key_id != CC3XX_AES_KEY_ID_USER_KEY) {
+        p_key = NULL;
+    }
+#endif /* CC3XX_CRYPTO_OPAQUE_KEYS */
+
     err = cc3xx_lowlevel_aes_init(CC3XX_AES_DIRECTION_ENCRYPT,
                                   CC3XX_AES_MODE_CMAC,
+#ifdef CC3XX_CRYPTO_OPAQUE_KEYS
                                   key_id,
-                                  (key_id == CC3XX_AES_KEY_ID_USER_KEY) ?
-                                    (uint32_t *)key_buffer : NULL,
+#else
+                                  CC3XX_AES_KEY_ID_USER_KEY,
+#endif
+                                  p_key,
                                   key_size,
                                   NULL, 0);
     if (err != CC3XX_ERR_SUCCESS) {
@@ -108,9 +118,10 @@ static psa_status_t cmac_setup(struct cc3xx_aes_state_t *state,
 {
     cc3xx_err_t err;
     cc3xx_aes_keysize_t key_size;
+    const uint32_t *p_key = (const uint32_t *)key_buffer;
+#ifdef CC3XX_CRYPTO_OPAQUE_KEYS
     cc3xx_aes_key_id_t key_id = CC3XX_AES_KEY_ID_USER_KEY;
 
-#ifdef CC3XX_CRYPTO_OPAQUE_KEYS
     if (CC3XX_IS_OPAQUE_KEY(attributes)) {
         key_id = (cc3xx_aes_key_id_t)(((uint32_t *)key_buffer)[0]);
     }
@@ -125,11 +136,20 @@ static psa_status_t cmac_setup(struct cc3xx_aes_state_t *state,
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
+#ifdef CC3XX_CRYPTO_OPAQUE_KEYS
+    if (key_id != CC3XX_AES_KEY_ID_USER_KEY) {
+        p_key = NULL;
+    }
+#endif /* CC3XX_CRYPTO_OPAQUE_KEYS */
+
     err = cc3xx_lowlevel_aes_init(CC3XX_AES_DIRECTION_ENCRYPT,
                                   CC3XX_AES_MODE_CMAC,
+#ifdef CC3XX_CRYPTO_OPAQUE_KEYS
                                   key_id,
-                                  (key_id == CC3XX_AES_KEY_ID_USER_KEY) ?
-                                    (uint32_t *)key_buffer : NULL,
+#else
+                                  CC3XX_AES_KEY_ID_USER_KEY,
+#endif
+                                  p_key,
                                   key_size,
                                   NULL, 0);
     if (err != CC3XX_ERR_SUCCESS) {
