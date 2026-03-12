@@ -16,6 +16,39 @@
 #include "tfm_utils.h"
 
 
+#define CC3XX_INIT_LOG_FMT        \
+    "[CC3XX] Init OK PIDR0: 0x%x" \
+    CC3XX_INIT_LOG_LCS_FMT        \
+    CC3XX_INIT_LOG_SECDBG_FMT     \
+    CC3XX_INIT_LOG_GPPC_FMT       \
+    "\r\n"
+
+#ifdef CC3XX_CONFIG_LCS_LOG_ENABLE
+#define CC3XX_INIT_LOG_LCS_FMT ", LCS: %s"
+#define CC3XX_INIT_LOG_LCS_ARG(lcs) , cc3xx_lowlevel_lcs_get_name(lcs)
+#else
+#define CC3XX_INIT_LOG_LCS_FMT
+#define CC3XX_INIT_LOG_LCS_ARG(lcs)
+#endif /* CC3XX_CONFIG_LCS_LOG_ENABLE */
+
+#ifdef CC3XX_CONFIG_SECURE_DEBUG_RESET_LOG_ENABLE
+#define CC3XX_INIT_LOG_SECDBG_FMT ", Secure debug reset: %u"
+#define CC3XX_INIT_LOG_SECDBG_ARG , (P_CC3XX->ao.ao_cc_sec_debug_reset & 0x1)
+#else
+#define CC3XX_INIT_LOG_SECDBG_FMT
+#define CC3XX_INIT_LOG_SECDBG_ARG
+#endif /* CC3XX_CONFIG_SECURE_DEBUG_RESET_LOG_ENABLE */
+
+#ifdef CC3XX_CONFIG_GPPC_LOG_ENABLE
+#define CC3XX_INIT_LOG_GPPC_FMT ", TCI: %u, PCI: %u"
+#define CC3XX_INIT_LOG_GPPC_ARG \
+    , ((P_CC3XX->ao.ao_cc_gppc >> 8) & 0x1) \
+    , ((P_CC3XX->ao.ao_cc_gppc >> 9) & 0x1)
+#else
+#define CC3XX_INIT_LOG_GPPC_FMT
+#define CC3XX_INIT_LOG_GPPC_ARG
+#endif /* CC3XX_CONFIG_GPPC_LOG_ENABLE */
+
 static void check_features(void)
 {
     /* Check for hashing support */
@@ -210,28 +243,11 @@ cc3xx_err_t cc3xx_lowlevel_init(void)
 #endif /* CC3XX_CONFIG_LCS_LOG_ENABLE */
 
     /* Log initialization status with peripheral ID and optional LCS and secure debug reset */
-    CC3XX_INFO("[CC3XX] Init OK PIDR0: 0x%x"
-#ifdef CC3XX_CONFIG_LCS_LOG_ENABLE
-               ", LCS: %s"
-#endif
-#ifdef CC3XX_CONFIG_SECURE_DEBUG_RESET_LOG_ENABLE
-               ", Secure debug reset: %u"
-#endif
-#ifdef CC3XX_CONFIG_GPPC_LOG_ENABLE
-               ", TCI: %u, PCI: %u"
-#endif
-               "\r\n", P_CC3XX->id.peripheral_id_0
-#ifdef CC3XX_CONFIG_LCS_LOG_ENABLE
-               , cc3xx_lowlevel_lcs_get_name(lcs)
-#endif
-#ifdef CC3XX_CONFIG_SECURE_DEBUG_RESET_LOG_ENABLE
-               , P_CC3XX->ao.ao_cc_sec_debug_reset & 0x1
-#endif
-#ifdef CC3XX_CONFIG_GPPC_LOG_ENABLE
-               , (P_CC3XX->ao.ao_cc_gppc >> 8) & 0x1
-               , (P_CC3XX->ao.ao_cc_gppc >> 9) & 0x1
-#endif
-               );
+    CC3XX_INFO(CC3XX_INIT_LOG_FMT,
+            P_CC3XX->id.peripheral_id_0
+            CC3XX_INIT_LOG_LCS_ARG(lcs)
+            CC3XX_INIT_LOG_SECDBG_ARG
+            CC3XX_INIT_LOG_GPPC_ARG);
 
     return CC3XX_ERR_SUCCESS;
 }
