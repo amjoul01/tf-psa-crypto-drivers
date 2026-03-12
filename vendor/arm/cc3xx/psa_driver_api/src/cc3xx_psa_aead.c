@@ -88,11 +88,11 @@ static psa_status_t aead_crypt(
     CC3XX_ASSERT(attributes != NULL);
     CC3XX_ASSERT(key_buffer != NULL);
     CC3XX_ASSERT(nonce != NULL);
-    CC3XX_ASSERT(!additional_data_length ^ (additional_data != NULL));
+    CC3XX_ASSERT(!additional_data_length == !additional_data);
     if (input_length != 0) {
         CC3XX_ASSERT(input != NULL);
     }
-    CC3XX_ASSERT(!output_size ^ (output != NULL));
+    CC3XX_ASSERT(!output_size == !output);
     CC3XX_ASSERT(output_length != NULL);
 
     key_type = psa_get_key_type(attributes);
@@ -572,7 +572,7 @@ psa_status_t cc3xx_aead_update(
 #endif /* !CC3XX_CONFIG_AES_TUNNELLING_ENABLE && PSA_WANT_ALG_CCM */
 
     CC3XX_ASSERT(operation != NULL);
-    CC3XX_ASSERT(!input_length ^ (input != NULL));
+    CC3XX_ASSERT(!input_length == !input);
     CC3XX_ASSERT(output_length != NULL);
 
     /* Initialize this length to a safe value that might be overridden */
@@ -760,7 +760,7 @@ psa_status_t cc3xx_aead_finish(
     uint32_t local_tag[16 / sizeof(uint32_t)];
 
     CC3XX_ASSERT(operation != NULL);
-    CC3XX_ASSERT(!ciphertext_size ^ (ciphertext != NULL));
+    CC3XX_ASSERT(!ciphertext_size == !ciphertext);
     CC3XX_ASSERT(ciphertext_length != NULL);
     CC3XX_ASSERT(tag != NULL);
     CC3XX_ASSERT(tag_length != NULL);
@@ -886,7 +886,7 @@ psa_status_t cc3xx_aead_verify(
     uint32_t local_tag[16 / sizeof(uint32_t)];
 
     CC3XX_ASSERT(operation != NULL);
-    CC3XX_ASSERT(!plaintext_size ^ (plaintext != NULL));
+    CC3XX_ASSERT(!plaintext_size == !plaintext);
     CC3XX_ASSERT(plaintext_length != NULL);
     CC3XX_ASSERT(tag != NULL);
     CC3XX_ASSERT(tag_size <= 16);

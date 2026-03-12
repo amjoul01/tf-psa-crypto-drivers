@@ -332,7 +332,7 @@ psa_status_t cc3xx_internal_cipher_setup_set_iv(
         const uint8_t *iv, size_t iv_length)
 {
     CC3XX_ASSERT(operation != NULL);
-    CC3XX_ASSERT(!iv_length ^ (iv != NULL));
+    CC3XX_ASSERT(!iv_length == !iv);
 
     switch (operation->key_type) {
 #if defined(PSA_WANT_KEY_TYPE_CHACHA20)

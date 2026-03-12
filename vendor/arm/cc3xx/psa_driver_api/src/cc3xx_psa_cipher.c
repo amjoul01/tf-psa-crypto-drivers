@@ -427,7 +427,7 @@ psa_status_t cc3xx_cipher_update(
 
     CC3XX_ASSERT(operation != NULL);
     CC3XX_ASSERT(input != NULL);
-    CC3XX_ASSERT(!output_size ^ (output != NULL));
+    CC3XX_ASSERT(!output_size == !output);
     CC3XX_ASSERT(output_length != NULL);
 
     /* Initialize */
