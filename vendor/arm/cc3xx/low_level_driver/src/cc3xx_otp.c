@@ -79,7 +79,7 @@ cc3xx_err_t cc3xx_lowlevel_otp_write(uint8_t *otp_addr,
 cc3xx_err_t cc3xx_lowlevel_otp_read(const uint8_t *otp_addr,
                                     size_t size, uint8_t *buf)
 {
-    uint32_t *word_ptr;
+    const uint32_t *word_ptr;
     uint32_t word;
     uint32_t start_offset;
     uint8_t out_done;
