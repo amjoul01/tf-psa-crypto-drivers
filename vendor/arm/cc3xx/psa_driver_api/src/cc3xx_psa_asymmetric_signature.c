@@ -191,9 +191,8 @@ static psa_status_t ecdsa_verify(const psa_key_attributes_t *attributes, cc3xx_e
     if (is_key_private) {
         p_key = &((uint8_t *)pubkey)[3];
         /* In this case we need to extract the public key from the private first */
-        psa_status_t status = cc3xx_export_public_key(
-                                    attributes, key, key_length,
-                                    (uint8_t *)p_key, sizeof(pubkey) - 3, &key_length_public);
+        status = cc3xx_export_public_key(
+            attributes, key, key_length, (uint8_t *)p_key, sizeof(pubkey) - 3, &key_length_public);
         if (status != PSA_SUCCESS) {
             return status;
         }
