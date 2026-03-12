@@ -52,7 +52,7 @@ static void poly1305_init_from_state(void)
 }
 
 
-void cc3xx_lowlevel_poly1305_init(uint32_t *poly_key_r, uint32_t *poly_key_s)
+void cc3xx_lowlevel_poly1305_init(const uint32_t *poly_key_r, const uint32_t *poly_key_s)
 {
     cc3xx_lowlevel_pka_init(sizeof(poly_prime));
 

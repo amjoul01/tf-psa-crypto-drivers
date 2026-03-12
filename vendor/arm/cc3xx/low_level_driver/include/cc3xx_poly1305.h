@@ -54,7 +54,7 @@ struct cc3xx_poly1305_state_t {
  *                              ``POLY1305_KEY_SIZE`` bytes in length.
  *
  */
-void cc3xx_lowlevel_poly1305_init(uint32_t *poly_key_r, uint32_t *poly_key_s);
+void cc3xx_lowlevel_poly1305_init(const uint32_t *poly_key_r, const uint32_t *poly_key_s);
 
 /**
  * @brief                        Input data into the poly1305 operation.
