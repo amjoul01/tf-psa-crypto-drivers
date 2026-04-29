@@ -17,7 +17,7 @@
 
 #include <assert.h>
 
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 
 #if defined(CC3XX_CONFIG_ECDSA_VERIFY_ENABLE)     \
     && !defined(CC3XX_CONFIG_ECDSA_SIGN_ENABLE)   \

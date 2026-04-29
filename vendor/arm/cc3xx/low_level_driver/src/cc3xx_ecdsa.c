@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 
 #define BITS_TO_BYTES(bits) (((bits) + 7u) / 8u)
 #define ALIGN_CMAC_OUTPUT(bytes) (((bytes) + 15) & ~15)

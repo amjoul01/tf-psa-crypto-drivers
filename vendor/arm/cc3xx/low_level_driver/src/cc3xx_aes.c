@@ -25,7 +25,7 @@
 #include "cc3xx_stdlib.h"
 #include "cc3xx_rng.h"
 
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 
 #ifdef CC3XX_CONFIG_AES_EXTERNAL_KEY_LOADER
 #include "cc3xx_aes_external_key_loader.h"

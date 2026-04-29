@@ -25,7 +25,7 @@
 #include "cc3xx_ec_weierstrass.h"
 #endif /* CC3XX_CONFIG_EC_CURVE_TYPE_WEIERSTRASS_ENABLE */
 
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 
 #include <string.h>
 

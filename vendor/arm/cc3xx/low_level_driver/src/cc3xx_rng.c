@@ -31,7 +31,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 
 #define ROUND_UP(x, bound) ((((x) + bound - 1) / bound) * bound)
 

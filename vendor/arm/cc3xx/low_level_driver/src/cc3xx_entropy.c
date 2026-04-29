@@ -25,7 +25,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 
 #ifdef CC3XX_CONFIG_RNG_EXTERNAL_ZERO_COUNT
 int32_t count_zero_bits_external(uint8_t *, size_t, uint32_t *);

@@ -21,7 +21,7 @@
 
 #include <assert.h>
 
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 #ifdef CC3XX_CONFIG_DMA_CACHE_FLUSH_ENABLE
 #include "cmsis.h"
 #endif

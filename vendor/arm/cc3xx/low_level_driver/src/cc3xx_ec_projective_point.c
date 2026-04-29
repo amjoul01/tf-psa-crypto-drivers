@@ -16,7 +16,7 @@
 #include "cc3xx_pka.h"
 #include "cc3xx_ec.h"
 
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 
 cc3xx_ec_point_projective cc3xx_lowlevel_ec_allocate_projective_point(void)
 {

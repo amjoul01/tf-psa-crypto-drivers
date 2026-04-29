@@ -19,7 +19,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 
 #ifdef CC3XX_CONFIG_RNG_EXTERNAL_TRNG
 #include "cc3xx_rng_external_trng.h"

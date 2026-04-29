@@ -13,7 +13,7 @@
 #include "cc3xx_engine_state.h"
 #include "cc3xx_stdlib.h"
 
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 
 #include "endian.h"
 #include <assert.h>
