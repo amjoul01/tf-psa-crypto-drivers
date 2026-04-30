@@ -13,7 +13,7 @@
 #include "cc3xx_drbg_ctr.h"
 #include "cc3xx_rng.h"
 #include "cc3xx_stdlib.h"
-#include "fatal_error.h"
+#include "cc3xx_fatal_error.h"
 
 static inline void long_dec(uint32_t acc32[4])
 {
