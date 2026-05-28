@@ -17,6 +17,7 @@
 #else
 #include CC3XX_CONFIG_FILE
 #endif
+#include "cc3xx_log.h"
 
 /* Check lowlevel config defines to see if a curve translation function is required */
 #if defined(CC3XX_CONFIG_ECDSA_KEYGEN_ENABLE) || \
@@ -96,6 +97,13 @@ cc3xx_ec_curve_id_t cc3xx_to_curve_id(psa_ecc_family_t psa_ecc_family, psa_key_b
 
 psa_status_t cc3xx_to_psa_err(enum cc3xx_error err)
 {
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic error "-Wswitch-enum"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic error "-Wswitch-enum"
+#endif
     switch (err) {
     case CC3XX_ERR_SUCCESS:
         return PSA_SUCCESS;
@@ -121,8 +129,16 @@ psa_status_t cc3xx_to_psa_err(enum cc3xx_error err)
         return PSA_ERROR_COMMUNICATION_FAILURE;
     case CC3XX_ERR_RNG_INVALID_RNG:
         return PSA_ERROR_INVALID_ARGUMENT;
+    case CC3XX_ERR_RNG_INVALID_TRNG_CONFIG:
+        return PSA_ERROR_INVALID_ARGUMENT;
+    case CC3XX_ERR_RNG_SP800_90B_ADAPTIVE_PROPORTION_TEST_FAIL:
+        return PSA_ERROR_INSUFFICIENT_ENTROPY;
+    case CC3XX_ERR_RNG_SP800_90B_REPETITION_COUNT_TEST_FAIL:
+        return PSA_ERROR_INSUFFICIENT_ENTROPY;
+    case CC3XX_ERR_RNG_SP800_90B_INVALID_THRESHOLD:
+        return PSA_ERROR_INVALID_ARGUMENT;
     case CC3XX_ERR_RNG_TOO_MANY_ATTEMPTS:
-        return PSA_ERROR_GENERIC_ERROR;
+        return PSA_ERROR_INSUFFICIENT_ENTROPY;
     case CC3XX_ERR_VERIFY_FAILED:
         return PSA_ERROR_INVALID_SIGNATURE;
     case CC3XX_ERR_INVALID_TAG:
@@ -166,7 +182,19 @@ psa_status_t cc3xx_to_psa_err(enum cc3xx_error err)
         return PSA_ERROR_NOT_PERMITTED;
     case CC3XX_ERR_KEY_SLOT_NOT_LOCKED:
         return PSA_ERROR_NOT_PERMITTED;
-    default:
-        return PSA_ERROR_HARDWARE_FAILURE;
+
+    case _ERROR_MAX:
+    case _ERROR_SIZE_PAD:
+        break;
     }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+
+    CC3XX_INFO_RAW("[WARN] cc3xx_to_psa_err: unknown cc3xx error code 0x%x\r\n", (int)err);
+
+    return PSA_ERROR_HARDWARE_FAILURE;
 }
