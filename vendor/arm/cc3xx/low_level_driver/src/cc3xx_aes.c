@@ -1248,6 +1248,15 @@ cc3xx_err_t cc3xx_lowlevel_aes_finish(uint32_t *tag, size_t *size)
         }
     }
 
+#if defined(CC3XX_CONFIG_AES_CCM_ENABLE)
+    if ((aes_state.mode == CC3XX_AES_MODE_CCM) &&
+        (aes_state.crypted_length == 0) &&
+        (aes_state.authed_length == 0)) {
+        ccm_calc_iv(false);
+        cc3xx_lowlevel_dma_flush_buffer(false);
+    }
+#endif /* defined(CC3XX_CONFIG_AES_CCM_ENABLE) */
+
     /* At this point all the bytes have been input into the actual AES
      * operation, so we can unset aes_remaining_bytes in case a finish step
      * requires running a secondary AES operation.
