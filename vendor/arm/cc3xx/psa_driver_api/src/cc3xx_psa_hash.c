@@ -192,7 +192,7 @@ psa_status_t cc3xx_hash_finish(cc3xx_hash_operation_t *operation,
         return PSA_ERROR_BUFFER_TOO_SMALL;
     }
 
-    cc3xx_lowlevel_hash_finish((uint32_t *)hash, hash_size);
+    cc3xx_lowlevel_hash_finish((uint32_t *)hash, *hash_length);
 
     return PSA_SUCCESS;
 }
@@ -216,6 +216,10 @@ psa_status_t cc3xx_hash_compute(psa_algorithm_t alg, const uint8_t *input,
         return status;
     }
 
+    if (hash_size < *hash_length) {
+        return PSA_ERROR_BUFFER_TOO_SMALL;
+    }
+
     err = cc3xx_lowlevel_hash_init(hash_alg);
     if (err != CC3XX_ERR_SUCCESS) {
         goto out;
@@ -226,7 +230,7 @@ psa_status_t cc3xx_hash_compute(psa_algorithm_t alg, const uint8_t *input,
         goto out;
     }
 
-    cc3xx_lowlevel_hash_finish((uint32_t *)hash, hash_size);
+    cc3xx_lowlevel_hash_finish((uint32_t *)hash, *hash_length);
 
 out:
     if (err != CC3XX_ERR_SUCCESS) {
