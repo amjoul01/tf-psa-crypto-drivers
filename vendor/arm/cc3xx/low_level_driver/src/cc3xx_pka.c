@@ -1387,7 +1387,7 @@ void cc3xx_lowlevel_pka_mod_inv(cc3xx_pka_reg_id_t r0, cc3xx_pka_reg_id_t res)
      */
     P_CC3XX->pka.opcode = opcode_construct(CC3XX_PKA_OPCODE_MODINV,
                                            PKA_OP_SIZE_N,
-                                           false, 0, false, r0_copy, false, res);
+                                           true, 1, false, r0_copy, false, res);
 
     /* Because this uses use OP_SIZE_N, it sometime leaves garbage bits in the
      * top words. Do a mask operation to clear these
