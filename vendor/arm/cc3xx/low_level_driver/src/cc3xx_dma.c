@@ -309,11 +309,11 @@ cc3xx_err_t cc3xx_lowlevel_dma_buffered_input_data(const void* buf, size_t lengt
          */
         if (dma_state.block_buf_needs_output && !write_output) {
             cc3xx_lowlevel_dma_flush_buffer(false);
-        } else {
+        } else if (block_buf_size_free != 0) {
             data_to_process_length =
                 length < block_buf_size_free ? length : block_buf_size_free;
             memcpy(dma_state.block_buf + dma_state.block_buf_size_in_use, buf,
-                   block_buf_size_free);
+                   data_to_process_length);
             dma_state.block_buf_size_in_use += data_to_process_length;
             buf += data_to_process_length;
             length -= data_to_process_length;
@@ -326,8 +326,8 @@ cc3xx_err_t cc3xx_lowlevel_dma_buffered_input_data(const void* buf, size_t lengt
 
     dma_state.block_buf_needs_output = write_output;
 
-    /* The block buf is now full, and we have remaining data. First dispatch the
-     * block buf. If the buffer is empty, this is a no-op.
+    /* Since there is still input left, the block buffer is either full or
+     * empty. Flush the full block before processing the remaining input.
      */
     cc3xx_lowlevel_dma_flush_buffer(false);
 
